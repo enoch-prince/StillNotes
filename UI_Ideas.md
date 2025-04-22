@@ -87,3 +87,6 @@ This page should **feel light**, not like a metrics dashboard — maybe illustra
             |   Discover  |
             +-------------+
 ```
+## ⏭️ Low-Fidelity Wireframe Sketches
+
+![wireframe](https://sdmntprwestus.oaiusercontent.com/files/00000000-8e84-6230-8c81-703ef0c3e1fa/raw?se=2025-04-22T11%3A20%3A58Z&sp=r&sv=2024-08-04&sr=b&scid=a07ba17c-d093-5b60-abc4-03ffc1b269b7&skoid=51916beb-8d6a-49b8-8b29-ca48ed86557e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-04-22T04%3A30%3A07Z&ske=2025-04-23T04%3A30%3A07Z&sks=b&skv=2024-08-04&sig=cI%2BS5yVnV1ppDMHFHvOlTezXwK%2BwIL02Q5aMjYP8Jt8%3D)
