@@ -1,0 +1,25 @@
+@import url('base.css');
+
+:root {
+  --bulma-primary-h: 251deg;
+  --bulma-primary-s: 88%;
+  --bulma-primary-l: 78%;
+  --bulma-info-h: 59deg;
+  --bulma-info-s: 68%;
+  --bulma-info-l: 60%;
+  --bulma-success-h: 141deg;
+  --bulma-success-s: 61%;
+  --bulma-success-l: 61%;
+  --bulma-warning-h: 47deg;
+  --bulma-warning-s: 94%;
+  --bulma-danger-h: 349deg;
+  --bulma-danger-s: 60%;
+  --bulma-danger-l: 52%;
+  --bulma-family-primary: Comfortaa;
+  --bulma-family-secondary: Plus Jakarta Sans;
+}
+
+/* Fonts:
+Comforta for headers
+Plus Jakarta sans  for body text
+*/
