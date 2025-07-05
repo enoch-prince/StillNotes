@@ -19,19 +19,26 @@ const onboard = useOnboardingStore();
             <div class="is-align-content-center">
                 <Onboard1SVG />
             </div>
-            <p class="is-size-3-mobile has-text-centered">Find peace in the small, scattered, uncertain moments.</p>
+            <p class="is-size-3-mobile has-text-centered mt-5">Find peace in the small, scattered, uncertain moments.
+            </p>
             <div class="is-flex is-align-items-flex-start is-justify-content-space-between width-80vw mt-6">
                 <div>
                     <button type="button">Skip</button>
                 </div>
                 <div>
-                    <button class="button" @click="onboard.incrementStep()">Next -></button>
+                    <button class="button" @click="onboard.incrementStep()">
+                        <span>Next</span>
+                        <span class="icon is-small">
+                            <font-awesome-icon icon="fa-solid fa-arrow-right fa-beat-fade"
+                                style="--fa-beat-fade-opacity: 0.1; --fa-beat-fade-scale: 1.25;" />
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
         <div class="flex-center" v-else-if="onboard.step == 2">
             <div class="is-align-content-center">
-                <Onboard1SVG />
+                <Onboard2SVG />
             </div>
             <p class="is-size-3-mobile has-text-centered mt-5">Every quiet moment matters</p>
             <div class="is-flex is-align-items-flex-start is-justify-content-space-between width-80vw mt-6">
@@ -39,21 +46,42 @@ const onboard = useOnboardingStore();
                     <button type="button">Skip</button>
                 </div>
                 <div>
-                    <button class="button" @click="onboard.incrementStep()">Next -></button>
+                    <button class="button" @click="onboard.incrementStep()">
+                        <span>Next</span>
+                        <span class="icon is-small">
+                            <!-- <font-awesome-icon icon="fa-brands fa-google" style="color: #B197FC;" /> -->
+                            <font-awesome-icon icon="fa-solid fa-arrow-right" />
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
         <div class="flex-center" v-else>
             <div class="is-align-content-center">
-                <Onboard1SVG />
+                <Onboard3SVG />
             </div>
             <p class="is-size-3-mobile has-text-centered mt-5">Reflect, remember, and stay rooted</p>
             <div class="is-flex is-flex-direction-row-reverse width-80vw mt-6">
                 <div>
-                    <button class="button" @click="onboard.incrementStep()">Next -></button>
+                    <button class="button" @click="onboard.incrementStep()">
+                        <span>Next</span>
+                        <span class="icon is-small">
+                            <font-awesome-icon icon="fa-solid fa-arrow-right" />
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
+
+        <nav class="pagination is-rounded" role="navigation" aria-label="pagination">
+            <ul class="pagination-list">
+                <li><a href="#" class="pagination-link" aria-label="Goto page 1">1</a></li>
+                <li><a href="#" class="pagination-link" aria-label="Goto page 45">45</a></li>
+                <li>
+                    <a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>
 
@@ -67,10 +95,6 @@ const onboard = useOnboardingStore();
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.max-width {
-    width: 100vw;
 }
 
 .width-80vw {
