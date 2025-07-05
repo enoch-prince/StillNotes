@@ -5,18 +5,23 @@ export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
   const doubleCount = computed(() => count.value * 2)
   function increment() {
-    count.value++
+    count.value++;
   }
 
   return { count, doubleCount, increment }
 })
 
 export const useOnboardingStore = defineStore('onboard', () => {
-  const step = ref(0);
-  const complete = computed(() => step.value > 3 ? true:false);
-  function incrementStep() {
-    step.value++;
+  const step = ref(0)
+  const complete = computed(() => (step.value > 3 ? true : false))
+  function nextStep() {
+    if (step.value >= 3) step.value = 3
+    else step.value++;
+  }
+  function prevStep() {
+    if (step.value <= 0) step.value = 0
+    else step.value--;
   }
 
-  return { step, complete, incrementStep };
+  return { step, complete, nextStep, prevStep }
 })
