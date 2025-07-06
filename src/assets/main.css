@@ -19,6 +19,86 @@
   --bulma-family-secondary: Plus Jakarta Sans;
 }
 
+.is-family-primary {
+  font-family: var(--bulma-family-primary) !important;
+}
+
+.is-family-secondary {
+  font-family: var(--bulma-family-secondary) !important;
+}
+
+.m-4p5 {
+  margin: 1.25rem !important;
+}
+
+.mt-4p5 {
+  margin-top: 1.25rem !important;
+}
+
+.mr-4p5 {
+  margin-right: 1.25rem !important;
+}
+
+.mb-4p5 {
+  margin-bottom: 1.25rem !important;
+}
+
+.ml-4p5 {
+  margin-left: 1.25rem !important;
+}
+
+.mx-4p5 {
+  margin-left: 1.25rem !important;
+  margin-right: 1.25rem !important;
+}
+
+.my-4p5 {
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.p-4p5 {
+  padding: 1.25rem !important;
+}
+
+.pt-4p5 {
+  padding-top: 1.25rem !important;
+}
+
+.pr-4p5 {
+  padding-right: 1.25rem !important;
+}
+
+.pb-4p5 {
+  padding-bottom: 1.25rem !important;
+}
+
+.pl-4p5 {
+  padding-left: 1.25rem !important;
+}
+
+.px-4p5 {
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+}
+
+.py-4p5 {
+  padding-top: 1.25rem !important;
+  padding-bottom: 1.25rem !important;
+}
+
+.button.is-rounded-4 {
+  border-radius: 1rem; /* 16px */
+  padding-left: calc(var(--bulma-button-padding-horizontal) + 0.25em);
+  padding-right: calc(var(--bulma-button-padding-horizontal) + 0.25em);
+}
+
+
+.button.is-transparent {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
 /* Fonts:
 Comforta for headers
 Plus Jakarta sans  for body text
