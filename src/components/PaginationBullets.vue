@@ -24,7 +24,7 @@ watchEffect(() => {
         :key="index"
         class="button is-rounded is-small"
         :class="{
-          'is-primary': (currentPage-1) === index,
+          'is-primary is-focused': (currentPage-1) === index,
           'is-light': (currentPage-1) !== index,
         }"
         style="width: 10px; height: 10px; padding: 0; margin: 0 4px;"

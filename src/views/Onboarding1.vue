@@ -4,6 +4,7 @@ import Onboard1SVG from '@/components/svgs/onboard1SVG.vue'
 import Onboard2SVG from '@/components/svgs/onboard2SVG.vue'
 import Onboard3SVG from '@/components/svgs/onboard3SVG.vue'
 import PaginationBullets from '@/components/PaginationBullets.vue'
+import Button from '@/components/Button.vue'
 
 const onboard = useOnboardingStore()
 </script>
@@ -28,27 +29,18 @@ const onboard = useOnboardingStore()
       <div
         class="is-flex is-align-items-flex-start is-justify-content-space-between width-80vw mt-6"
       >
-        <div>
-          <button
-            class="button is-transparent is-rounded-4 px-4p5 py-4"
-          >
-         <span class="is-family-secondary has-text-primary-100">Skip</span>
-          
-          </button>
-        </div>
-        <div>
-          <button class="button is-rounded-4 px-4p5 py-4" @click="onboard.nextStep">
-            <span class="has-text-primary is-family-secondary mr-3 "
-              >Next</span
-            >
-            <span class="icon is-small ml-3">
-              <font-awesome-icon
-                icon="fa-solid fa-arrow-right"
-                style="color: var(--bulma-primary)"
-              />
-            </span>
-          </button>
-        </div>
+        <Button color="transparent" label-color="light">Skip</Button>
+        <Button
+          icon="fas fa-arrow-right"
+          icon-position="right"
+          icon-size="small"
+          icon-color="primary"
+          icon-gap="5"
+          label-color="primary"
+          @click="onboard.nextStep"
+        >
+          Next
+        </Button>
       </div>
     </div>
     <div class="flex-center" v-else-if="onboard.step == 2">
@@ -61,27 +53,18 @@ const onboard = useOnboardingStore()
       <div
         class="is-flex is-align-items-flex-start is-justify-content-space-between width-80vw mt-6"
       >
-        <div>
-          <button
-            class="button is-transparent is-rounded-4 px-4p5 py-4"
-          >
-         <span class="is-family-secondary has-text-primary-100">Skip</span>
-          
-          </button>
-        </div>
-        <div>
-          <button class="button is-rounded-4 px-4p5 py-4" @click="onboard.nextStep">
-            <span class="has-text-primary is-family-secondary mr-3 "
-              >Next</span
-            >
-            <span class="icon is-small ml-3">
-              <font-awesome-icon
-                icon="fa-solid fa-arrow-right"
-                style="color: var(--bulma-primary)"
-              />
-            </span>
-          </button>
-        </div>
+        <Button color="transparent" label-color="light">Skip</Button>
+        <Button
+          icon="fas fa-arrow-right"
+          icon-position="right"
+          icon-size="small"
+          icon-color="primary"
+          icon-gap="5"
+          label-color="primary"
+          @click="onboard.nextStep"
+        >
+          Next
+        </Button>
       </div>
     </div>
     <div class="flex-center" v-else>
@@ -92,19 +75,17 @@ const onboard = useOnboardingStore()
         Reflect, remember, and stay rooted
       </p>
       <div class="is-flex is-flex-direction-row-reverse width-80vw mt-6">
-        <div>
-          <button class="button is-rounded-4 px-4p5 py-4" @click="onboard.nextStep">
-            <span class="has-text-primary is-family-secondary mr-3"
-              >Next</span
-            >
-            <span class="icon is-small ml-3">
-              <font-awesome-icon
-                icon="fa-solid fa-arrow-right"
-                style="color: var(--bulma-primary)"
-              />
-            </span>
-          </button>
-        </div>
+        <Button
+          icon="fas fa-arrow-right"
+          icon-position="right"
+          icon-size="small"
+          icon-color="primary"
+          icon-gap="5"
+          label-color="primary"
+          @click="onboard.nextStep"
+        >
+          Next
+        </Button>
       </div>
     </div>
     <PaginationBullets :total-pages="3" v-show="onboard.step > 0" />

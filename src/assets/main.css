@@ -87,10 +87,28 @@
   padding-bottom: 1.25rem !important;
 }
 
+.ml-5p5 {
+  margin-left: 2.5rem !important;
+}
+
+.mr-5p5 {
+  margin-right: 2.5rem !important;
+}
+
+.ml-8p5 {
+  margin-left: 4.375rem !important;
+}
+
+.mr-8p5 {
+  margin-right: 4.375rem !important;
+}
+
 .button.is-rounded-4 {
   border-radius: 1rem; /* 16px */
   padding-left: calc(var(--bulma-button-padding-horizontal) + 0.25em);
   padding-right: calc(var(--bulma-button-padding-horizontal) + 0.25em);
+  padding-bottom: 1rem;
+  padding-top: 1rem;
 }
 
 
