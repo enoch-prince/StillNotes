@@ -17,7 +17,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="has-text-centered mt-4">
+  <div class="has-text-centered mt-5p5">
     <div class="buttons is-centered is-inline-flex">
       <button
         v-for="(page, index) in totalPages"
@@ -33,4 +33,3 @@ watchEffect(() => {
     </div>
   </div>
 </template>
-

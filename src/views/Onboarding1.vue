@@ -23,58 +23,45 @@ const onboard = useOnboardingStore()
       <div class="is-align-content-center">
         <Onboard1SVG />
       </div>
-      <p class="is-size-3-mobile has-text-centered has-text-primary-100 mt-5">
+      <p class="is-size-3-touch has-text-centered has-text-primary-100 mt-5">
         Find peace in the small, scattered, uncertain moments.
       </p>
-      <div
-        class="is-flex is-align-items-flex-start is-justify-content-space-between width-80vw mt-6"
-      >
-        <Button color="transparent" label-color="light">Skip</Button>
-        <Button
-          icon="fas fa-arrow-right"
-          icon-position="right"
-          icon-size="small"
-          icon-color="primary"
-          icon-gap="5"
-          label-color="primary"
-          @click="onboard.nextStep"
-        >
-          Next
-        </Button>
-      </div>
     </div>
+
     <div class="flex-center" v-else-if="onboard.step == 2">
       <div class="is-align-content-center">
         <Onboard2SVG />
       </div>
-      <p class="is-size-3-mobile has-text-centered has-text-primary-100 mt-5">
+      <p class="is-size-3-touch has-text-centered has-text-primary-100 mt-5">
         Every quiet moment matters
       </p>
-      <div
-        class="is-flex is-align-items-flex-start is-justify-content-space-between width-80vw mt-6"
-      >
-        <Button color="transparent" label-color="light">Skip</Button>
-        <Button
-          icon="fas fa-arrow-right"
-          icon-position="right"
-          icon-size="small"
-          icon-color="primary"
-          icon-gap="5"
-          label-color="primary"
-          @click="onboard.nextStep"
-        >
-          Next
-        </Button>
-      </div>
     </div>
+
     <div class="flex-center" v-else>
       <div class="is-align-content-center">
         <Onboard3SVG />
       </div>
-      <p class="is-size-3-mobile has-text-centered has-text-primary-100 mt-5">
+      <p class="is-size-3-touch has-text-centered has-text-primary-100 mt-5">
         Reflect, remember, and stay rooted
       </p>
-      <div class="is-flex is-flex-direction-row-reverse width-80vw mt-6">
+    </div>
+
+    <div v-show="onboard.step > 0">
+      <PaginationBullets :total-pages="3" />
+      <div
+        class="is-flex width-80vw mt-5p5"
+        :class="
+          onboard.step >= 3
+            ? 'is-flex-direction-row-reverse'
+            : 'is-align-items-flex-start is-justify-content-space-between'
+        "
+      >
+        <Button
+          color="transparent"
+          label-color="light"
+          v-show="onboard.step < 3"
+          >Skip</Button
+        >
         <Button
           icon="fas fa-arrow-right"
           icon-position="right"
@@ -88,7 +75,6 @@ const onboard = useOnboardingStore()
         </Button>
       </div>
     </div>
-    <PaginationBullets :total-pages="3" v-show="onboard.step > 0" />
   </div>
 </template>
 
@@ -110,5 +96,10 @@ const onboard = useOnboardingStore()
 
 .max-height {
   height: 100vh;
+}
+
+p {
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 </style>

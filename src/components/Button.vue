@@ -1,5 +1,18 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
+import type { PropType } from 'vue'
+
+interface IconAnimation {
+  pulse?: boolean
+  spin?: boolean
+  bounce?: boolean
+  shake?: boolean
+  beat?: boolean
+  fade?: boolean
+  beatFade?: boolean
+  spinPulse?: boolean
+  spinReverse?: boolean
+}
 
 type ButtonColor =
   | 'primary'
@@ -20,6 +33,7 @@ type ButtonSize = 'small' | 'normal' | 'medium' | 'large' | undefined
 type IconPosition = 'left' | 'right'
 type IconSize = 'small' | 'normal' | 'medium' | 'large'
 type SpacingSize = '0' | '1' | '2' | '3' | '4' | '4p5' | '5' | '5p5' | '6' | '8p5' | 'auto'
+
 
 const props = defineProps({
   // Button styling
@@ -83,8 +97,16 @@ const props = defineProps({
     type: String as () => IconPosition,
     default: 'left',
   },
+  iconAnimate: {
+    type: Object as PropType<IconAnimation>,
+      default: () => ({})
+  },
   iconSize: {
     type: String as () => IconSize,
+    default: undefined,
+  },
+  labelSize: {
+    type: String as () => SpacingSize,
     default: undefined,
   },
   iconColor: {
@@ -114,7 +136,6 @@ const buttonClasses = computed(() => ({
   'is-loading': props.loading,
   'is-static': props.static,
   'is-fullwidth': props.fullWidth,
-  'is-rounded': props.rounded,
   'is-rounded-4': !props.rounded,
 }))
 
@@ -135,6 +156,18 @@ const iconMarginClasses = computed(() => ({
 
 const iconSizeClass = computed(() => ({
   [`is-${props.iconSize}`]: props.iconSize,
+}))
+
+// Computed object to extract just the truthy animations
+const activeAnimations = computed(() => {
+  console.log(props.iconAnimate)
+  return Object.entries(props.iconAnimate)
+    .filter(([_, value]) => value)
+    .map(([key]) => key);
+});
+
+const labelSizeClass = computed(() => ({
+  [`is-size-${props.labelSize}-touch`]: props.labelSize,
 }))
 
 const iconColorCSS = computed(() => 
@@ -159,20 +192,21 @@ const labelColorClass = computed(() => ({
           <i v-if="icon" :class="icon"></i>
         </slot>
       </span>
-      <span v-if="$slots.default" class="is-family-secondary" :class="[labelColorClass]">
+      <span v-if="$slots.default" class="is-family-secondary" :class="[labelColorClass, labelSizeClass]">
         <!-- label goes here-->
         <slot />
       </span>
     </template>
 
     <template v-else>
-      <span v-if="$slots.default" class="is-family-secondary" :class="[labelColorClass]">
+      <span v-if="$slots.default" class="is-family-secondary" :class="[labelColorClass, labelSizeClass]">
         <!-- label goes here-->
         <slot />
       </span>
       <span v-if="showIcon" class="icon" :class="[iconSizeClass, iconMarginClasses]">
         <slot name="icon">
-          <!-- <i v-if="icon" :class="icon"></i> -->
+          <!-- <font-awesome-icon v-if="icon" :icon="icon" :class="activeAnimations"/> -->
+          <!-- <font-awesome-icon v-if="icon" :icon="icon" beatFade /> -->
           <font-awesome-icon v-if="icon" :icon="icon" />
         </slot>
       </span>
