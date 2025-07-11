@@ -1,12 +1,23 @@
 <script setup lang="ts">
+import { computed, watchEffect } from 'vue'
 import { useOnboardingStore } from '@/stores/counter'
 import Onboard1SVG from '@/components/svgs/onboard1SVG.vue'
 import Onboard2SVG from '@/components/svgs/onboard2SVG.vue'
 import Onboard3SVG from '@/components/svgs/onboard3SVG.vue'
 import PaginationBullets from '@/components/PaginationBullets.vue'
 import Button from '@/components/Button.vue'
+import { useRouter } from 'vue-router'
+
 
 const onboard = useOnboardingStore()
+const router = useRouter()
+
+watchEffect(()=> {
+  if (onboard.complete) {
+    console.log("Redirected!")
+    router.push({path: '/'})
+  }
+})
 </script>
 
 <template>

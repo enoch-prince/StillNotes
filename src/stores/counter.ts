@@ -13,9 +13,9 @@ export const useCounterStore = defineStore('counter', () => {
 
 export const useOnboardingStore = defineStore('onboard', () => {
   const step = ref(0)
-  const complete = computed(() => (step.value >= 3 ? true : false))
+  const complete = computed(() => (step.value >= 4 ? true : false))
   function nextStep() {
-    if (step.value >= 3) step.value = 3
+    if (step.value >= 4) step.value = 4
     else step.value++;
   }
   function prevStep() {
