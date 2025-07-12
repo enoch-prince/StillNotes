@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
+import { watchEffect } from 'vue'
 import { useOnboardingStore } from '@/stores/counter'
 import Onboard1SVG from '@/components/svgs/onboard1SVG.vue'
 import Onboard2SVG from '@/components/svgs/onboard2SVG.vue'

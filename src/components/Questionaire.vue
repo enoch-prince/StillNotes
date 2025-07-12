@@ -29,7 +29,8 @@
   padding: 1rem 0.5rem;
   gap: 0.875rem;
 
-  width: 9.75rem;/*156px;*/
+  /*width: 9.75rem; */ /*156px;*/
+  width: auto;/*156px;*/
   height: 8.5rem;/*136px;*/
 
   background: #d1c7ff;
@@ -40,7 +41,8 @@
 .icon-layout {
   display: flex;
   padding: 0.75rem;
-  margin: 0 2rem 0 auto; /* top right bottom left */
+  /*margin: 0 2rem 0 auto;*/ /* top right bottom left */
+  margin: 0 auto; /* top right bottom left */
   width: 2.875rem;
   height: 2.875rem;
   background: #ffffff;
