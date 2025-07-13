@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="mini-card">
+  <div class="flex-card">
     <div class="is-flex is-flex-direction-row is-justify-content-space-between has-width-100">
       <span class="icon icon-layout">
         <font-awesome-icon icon="fa fa-gamepad"></font-awesome-icon>
@@ -21,7 +21,7 @@
 
 <style scoped>
 
-.mini-card {
+.flex-card {
   display: flex;
   flex-direction: column;
   align-items: center;

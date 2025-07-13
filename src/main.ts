@@ -18,7 +18,10 @@ import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 
 /* import touch events */
-import Vue3TouchEvents from "vue3-touch-events";
+import Vue3TouchEvents, {
+  type Vue3TouchEventsOptions,
+} from "vue3-touch-events";
+
 
 /* add icons to the library */
 library.add(fas)
@@ -30,6 +33,9 @@ const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(createPinia())
 app.use(router)
-app.use(Vue3TouchEvents);
+app.use<Vue3TouchEventsOptions>(Vue3TouchEvents, {
+  disableClick: true
+  // any other global options...
+})
 
 app.mount('#app')
