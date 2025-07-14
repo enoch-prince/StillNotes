@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, useId } from 'vue';
+
+const emits = defineEmits(['selectQ'])
+const id = useId();
 
 const selected = ref(false);
+const props = defineProps<{
+    icon: string
+    label: string
+    color: string
+}>()
+
+function toggleSelection() {
+  selected.value = !selected.value
+  emits('selectQ', { label: props.label, selected: selected.value, id:id })
+}
 
 </script>
 
 <template>
-  <div class="flex-card is-clickable" @click="selected = !selected">
+  <div class="flex-card is-clickable" @click="toggleSelection">
     <div class="is-flex is-flex-direction-row is-justify-content-space-between has-width-100">
       <span class="icon icon-layout">
-        <font-awesome-icon icon="fa fa-gamepad"></font-awesome-icon>
+        <font-awesome-icon :icon="props.icon"></font-awesome-icon>
       </span>
        <span
         class="icon is-small is-rounded-background-success transition-opacity"
@@ -19,8 +32,8 @@ const selected = ref(false);
       </span>
     </div>
     <div>
-      <p class="is-family-secondary is-size-6-touch has-text-weight-semibold">
-        Daily Devotion
+      <p class="is-family-secondary is-size-6-touch has-text-weight-semibold has-text-centered">
+        {{ props.label }}
       </p>
     </div>
   </div>
@@ -39,7 +52,7 @@ const selected = ref(false);
   width: auto;
   height: 8.5rem;/*136px;*/
 
-  background: #d1c7ff;
+  background: v-bind('props.color');
   border-radius: 0.5rem;
 }
 

@@ -189,7 +189,7 @@ const labelColorClass = computed(() => ({
     <template v-if="iconPosition === 'left'">
       <span v-if="showIcon" class="icon" :class="[iconSizeClass, iconMarginClasses]">
         <slot name="icon">
-          <i v-if="icon" :class="icon"></i>
+          <font-awesome-icon v-if="icon" :icon="icon" />
         </slot>
       </span>
       <span v-if="$slots.default" class="is-family-secondary" :class="[labelColorClass, labelSizeClass]">
