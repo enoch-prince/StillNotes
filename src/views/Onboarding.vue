@@ -15,7 +15,7 @@ const router = useRouter()
 watchEffect(()=> {
   if (onboard.complete) {
     console.log("Redirected!")
-    router.push({path: '/'})
+    router.push({path: '/questionaire'})
   }
 })
 </script>
