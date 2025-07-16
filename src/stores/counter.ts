@@ -25,3 +25,16 @@ export const useOnboardingStore = defineStore('onboard', () => {
 
   return { step, complete, nextStep, prevStep }
 })
+
+
+export const useDateStore = defineStore('dateStore', {
+  state: () => ({
+    today: new Date(),
+    selectedDate: new Date()
+  }),
+  actions: {
+    selectDate(date: Date) {
+      this.selectedDate = date
+    }
+  }
+})
