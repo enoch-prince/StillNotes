@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import type { RouteLocationNormalized } from 'vue-router'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
@@ -35,6 +36,39 @@ export const useDateStore = defineStore('dateStore', {
   actions: {
     selectDate(date: Date) {
       this.selectedDate = date
+    }
+  }
+})
+
+export const useReminderStore = defineStore('reminder', () => {
+  const remindMe = ref(false)
+
+  const reminderEnabled = computed(() => remindMe.value)
+
+  const unsetReminder = () => {
+    remindMe.value = false
+  }
+
+  return {remindMe, reminderEnabled, unsetReminder}
+})
+
+export const useQuestionaireStore = defineStore('questionaire', () => {
+  const state = ref(false)
+
+  const completed = computed(() => state.value)
+
+
+  return {state, completed}
+})
+
+
+export const useNavigationStore = defineStore('navigation', {
+  state: () => ({
+    previousRoute: null as RouteLocationNormalized | null
+  }),
+  actions: {
+    setPrevious(route: RouteLocationNormalized) {
+      this.previousRoute = route
     }
   }
 })

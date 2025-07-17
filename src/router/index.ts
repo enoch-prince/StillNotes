@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import TrendingView from '@/views/TrendingView.vue'
 import SearchView from '@/views/SearchView.vue'
 import SettingsView from '@/views/SettingsView.vue'
+import { useNavigationStore } from '@/stores/counter'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,10 +32,20 @@ const router = createRouter({
     },
     {
       path: '/onboard',
-      name: 'onboarding',
+      name: 'onboard',
       component: () => import('../views/Onboarding.vue'),
     },
   ],
+})
+
+
+router.beforeEach((to, from, next) => {
+  const navStore = useNavigationStore()
+
+  if (from.name) {
+    navStore.setPrevious(from)
+  }
+  next()
 })
 
 export default router

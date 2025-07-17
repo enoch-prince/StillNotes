@@ -3,16 +3,43 @@ import CalendarScroller from '@/components/CalendarScroller.vue'
 import Button from '@/components/Button.vue'
 import BottomNavBar from '@/components/BottomNavBar.vue'
 import HomeReminderSVG from '@/components/svgs/homeReminderSVG.vue'
+import { useNavigationStore, useReminderStore } from '@/stores/counter'
+import { computed, ref, watchEffect } from 'vue'
 
 const user = 'Kwame'
+
+const reminder = useReminderStore()
+const navStore = useNavigationStore()
+const previousRoute = computed(() => navStore.previousRoute)
+const modalActive = ref(false)
+
+const modalClasses = computed(() => ({
+  'is-active': modalActive.value,
+}))
 
 const handleNav = (id: string) => {
   console.log('Navigate to:', id)
 }
+
 // floating action buttons
 const handleFab = () => {
   console.log('FAB pressed: Open new note')
 }
+
+const handleModalYes = () => {
+  reminder.remindMe = true
+  modalActive.value = false
+}
+
+watchEffect(() => {
+  if (previousRoute.value?.name === 'questionaire') {
+    modalActive.value = true
+  } else {
+    if (!reminder.remindMe) {
+      modalActive.value = true
+    }
+  }
+})
 </script>
 
 <template>
@@ -40,7 +67,7 @@ const handleFab = () => {
     </div>
 
     <!-- Modal -->
-    <div class="modal">
+    <div class="modal" :class="modalClasses">
       <div class="modal-background"></div>
       <div
         class="modal-content is-flex is-flex-direction-column is-justify-content-center is-align-items-center p-5 has-width-85"
@@ -55,11 +82,11 @@ const handleFab = () => {
           </p>
         </div>
         <div class="is-flex is-justify-content-space-between" style="width: 100%">
-          <Button py="2" style="width: 38.1%">No</Button>
-          <Button py="2" style="width: 38.1%">Yes</Button>
+          <Button py="2" style="width: 38.1%" @click="modalActive = false">No</Button>
+          <Button py="2" style="width: 38.1%" @click="handleModalYes">Yes</Button>
         </div>
       </div>
-      <button class="modal-close is-large" aria-label="close"></button>
+      <button class="modal-close is-large" aria-label="close" @click="modalActive = false"></button>
     </div>
 
     <!-- Navigation Bar -->

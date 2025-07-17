@@ -3,6 +3,7 @@ import Questionaire from '@/components/Questionaire.vue'
 import Button from '@/components/Button.vue'
 import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuestionaireStore } from '@/stores/counter'
 
 interface QStructure {
   id: string
@@ -10,6 +11,8 @@ interface QStructure {
 }
 
 const selectedQs: Ref<Array<QStructure>> = ref([])
+const router = useRouter()
+const questionaire = useQuestionaireStore()
 
 function handleQSelect(data: { label: string; selected: boolean; id: string }) {
   if (data.selected) {
@@ -24,16 +27,16 @@ function handleQSelect(data: { label: string; selected: boolean; id: string }) {
   console.log(selectedQs.value)
 }
 
-const router = useRouter()
-
 const handleNext = () => {
   console.log("Next Pressed!")
   // save selected options to db
+  questionaire.state = true;
   router.push({path: '/'})
 }
 
 const handleSkip = () => {
   console.log("Skip Pressed!")
+  questionaire.state = false
   router.push({path: '/'})
 }
 
