@@ -3,6 +3,7 @@ import CalendarScroller from '@/components/CalendarScroller.vue'
 import Button from '@/components/Button.vue'
 import BottomNavBar from '@/components/BottomNavBar.vue'
 import HomeReminderSVG from '@/components/svgs/homeReminderSVG.vue'
+import ReminderModal from '@/components/Reminder.vue'
 import { useNavigationStore, useReminderStore } from '@/stores/counter'
 import { computed, ref, watchEffect } from 'vue'
 
@@ -12,6 +13,7 @@ const reminder = useReminderStore()
 const navStore = useNavigationStore()
 const previousRoute = computed(() => navStore.previousRoute)
 const modalActive = ref(false)
+// const showSetReminder = ref(false)
 
 const modalClasses = computed(() => ({
   'is-active': modalActive.value,
@@ -31,6 +33,11 @@ const handleModalYes = () => {
   modalActive.value = false
 }
 
+const handleSaveReminder = () => {
+  console.log('Reminder saved!')
+  modalActive.value = false
+}
+
 watchEffect(() => {
   if (previousRoute.value?.name === 'questionaire') {
     modalActive.value = true
@@ -40,6 +47,7 @@ watchEffect(() => {
     }
   }
 })
+
 </script>
 
 <template>
@@ -87,6 +95,10 @@ watchEffect(() => {
         </div>
       </div>
       <button class="modal-close is-large" aria-label="close" @click="modalActive = false"></button>
+    </div>
+
+    <div>
+      <ReminderModal v-model="reminder.remindMe" @save="handleSaveReminder" />
     </div>
 
     <!-- Navigation Bar -->

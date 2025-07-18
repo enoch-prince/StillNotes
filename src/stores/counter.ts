@@ -72,3 +72,41 @@ export const useNavigationStore = defineStore('navigation', {
     }
   }
 })
+
+
+export const useSetReminderStore = defineStore('set-reminder', () => {
+  const selectedHour = ref(8)
+  const selectedMinute = ref(30)
+  const selectedPeriod = ref('AM')
+  const repeatDays = ref<string[]>(['M', 'T', 'W', 'T', 'F'])
+  const vibrate = ref(true)
+  const ringtone = ref('Default')
+
+  function toggleDay(day: string) {
+    if (repeatDays.value.includes(day)) {
+      repeatDays.value = repeatDays.value.filter(d => d !== day)
+    } else {
+      repeatDays.value.push(day)
+    }
+  }
+
+  function toggleVibrate() {
+    vibrate.value = !vibrate.value
+  }
+
+  function setRingtone(name: string) {
+    ringtone.value = name
+  }
+
+  return {
+    selectedHour,
+    selectedMinute,
+    selectedPeriod,
+    repeatDays,
+    vibrate,
+    ringtone,
+    toggleDay,
+    toggleVibrate,
+    setRingtone
+  }
+})
