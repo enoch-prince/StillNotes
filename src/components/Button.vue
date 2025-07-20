@@ -61,7 +61,7 @@ const props = defineProps({
     default: undefined,
   },
   px: {
-    type: String as () => SpacingSize,
+    type: String as () => SpacingSize | String,
     default: undefined,
   },
   py: {

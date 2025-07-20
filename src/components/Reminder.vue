@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSetReminderStore } from '@/stores/counter'
+import Button from '@/components/Button.vue'
 
-const props = defineProps<{ modelValue: boolean }>()
+defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'save'])
 
 const { selectedHour, selectedMinute, selectedPeriod, repeatDays, vibrate, ringtone } =
   storeToRefs(useSetReminderStore())
-const { toggleDay, toggleVibrate, setRingtone } = useSetReminderStore()
+const { toggleDay, setRingtone } = useSetReminderStore()
 
 const hours = Array.from({ length: 12 }, (_, i) => i + 1)
 const minutes = Array.from({ length: 60 }, (_, i) => i)
-const periods: string[] = ['AM', 'PM']
 
 function close() {
   emit('update:modelValue', false)
@@ -35,7 +34,7 @@ function togglePeriod() {
 
       <div class="modal-card reminder-modal">
         <section class="modal-card-body pb-4 px-4">
-          <!-- Time Picker -->
+
           <!-- Time Picker -->
           <div class="columns is-mobile is-centered has-text-centered mb-5 time-picker-wrapper">
             <div class="column is-narrow">
@@ -110,8 +109,8 @@ function togglePeriod() {
 
         <!-- Footer -->
         <footer class="modal-card-foot is-flex is-justify-content-space-between px-5 py-5">
-          <button class="button is-light is-rounded has-text-primary" @click="close">Cancel</button>
-          <button class="button is-primary is-rounded px-6" @click="done">Done</button>
+          <Button color="primary" label-color="primary" px="5p5" py="2" outlined @click="close">Cancel</Button>
+          <Button color="primary" label-color="light" py="2" style="padding-left: 2.75rem; padding-right: 2.75rem;" @click="done">Done</Button>
         </footer>
       </div>
     </div>
@@ -131,7 +130,7 @@ function togglePeriod() {
 
 .reminder-modal {
   border-radius: 1.25rem;
-  max-width: 30rem;
+  max-width: 95%;
 }
 
 .time-scroll {

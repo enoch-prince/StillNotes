@@ -91,6 +91,11 @@
   padding-bottom: 1.25rem !important;
 }
 
+.px-5p5 {
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
 .ml-5p5 {
   margin-left: 2.5rem !important;
 }
