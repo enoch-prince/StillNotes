@@ -28,97 +28,107 @@ function togglePeriod() {
 </script>
 
 <template>
-  <transition name="modal-fade">
-    <div v-if="modelValue" class="modal is-active">
-      <div class="modal-background" @click="close" />
+  <Teleport to="body">
+    <transition name="slide-up">
+      <div v-if="modelValue" class="modal is-active">
+        <div class="modal-background" @click="close" />
 
-      <div class="modal-card reminder-modal">
-        <section class="modal-card-body pb-4 px-4">
-
-          <!-- Time Picker -->
-          <div class="columns is-mobile is-centered has-text-centered mb-5 time-picker-wrapper">
-            <div class="column is-narrow">
-              <div class="time-scroll">
-                <div
-                  v-for="h in hours"
-                  :key="h"
-                  class="time-unit"
-                  :class="{ 'is-selected': h === selectedHour }"
-                  @click="selectedHour = h"
-                >
-                  {{ h }}
+        <div class="modal-card bottom-modal-content">
+          <section class="modal-card-body pb-4 px-4">
+            <!-- Time Picker -->
+            <div class="columns is-mobile is-centered has-text-centered mb-5 time-picker-wrapper">
+              <div class="column is-narrow">
+                <div class="time-scroll">
+                  <div
+                    v-for="h in hours"
+                    :key="h"
+                    class="time-unit"
+                    :class="{ 'is-selected': h === selectedHour }"
+                    @click="selectedHour = h"
+                  >
+                    {{ h }}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="column is-narrow">
-              <div class="time-scroll">
-                <div
-                  v-for="m in minutes"
-                  :key="m"
-                  class="time-unit"
-                  :class="{ 'is-selected': m === selectedMinute }"
-                  @click="selectedMinute = m"
-                >
-                  {{ m.toString().padStart(2, '0') }}
+              <div class="column is-narrow">
+                <div class="time-scroll">
+                  <div
+                    v-for="m in minutes"
+                    :key="m"
+                    class="time-unit"
+                    :class="{ 'is-selected': m === selectedMinute }"
+                    @click="selectedMinute = m"
+                  >
+                    {{ m.toString().padStart(2, '0') }}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- AM/PM Button Outside Flow -->
-            <button
-              class="am-pm-toggle button is-small is-rounded is-transparent"
-              @click="togglePeriod"
-            >
-              {{ selectedPeriod }}
-            </button>
-          </div>
-
-          <!-- Repeat Days -->
-          <div class="mb-4 is-family-secondary">
-            <p class="has-text-weight-normal has-text-grey-dark is-size-7 mb-2">REPEAT</p>
-            <div class="buttons is-centered">
+              <!-- AM/PM Button Outside Flow -->
               <button
-                v-for="day in ['M', 'T', 'W', 'T', 'F', 'S', 'S']"
-                :key="day"
-                class="button is-size-6 is-rounded has-text-weight-normal"
-                :class="{ 'is-primary': repeatDays.includes(day) }"
-                @click="toggleDay(day)"
+                class="am-pm-toggle button is-small is-rounded is-transparent"
+                @click="togglePeriod"
               >
-                {{ day }}
+                {{ selectedPeriod }}
               </button>
             </div>
-          </div>
 
-          <!-- Vibrate -->
-          <div class="is-flex is-justify-content-space-between py-4 mb-2">
-            <span class="has-text-weight-medium">Vibrate</span>
-            <label class="switch toggle">
-              <input type="checkbox" v-model="vibrate" />
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <!-- Ringtone -->
-          <div class="is-flex is-justify-content-space-between is-align-items-center py-4 mb-4">
-            <span class="has-text-weight-medium">Ringtone</span>
-            <div class="has-text-grey is-size-7 is-clickable" @click="setRingtone('Default')">
-              {{ ringtone }} <font-awesome-icon icon="fas fa-chevron-right" class="ml-2"/>
+            <!-- Repeat Days -->
+            <div class="mb-4 is-family-secondary">
+              <p class="has-text-weight-normal has-text-grey-dark is-size-7 mb-2">REPEAT</p>
+              <div class="buttons is-centered">
+                <button
+                  v-for="day in ['M', 'T', 'W', 'T', 'F', 'S', 'S']"
+                  :key="day"
+                  class="button is-size-6 is-rounded has-text-weight-normal"
+                  :class="{ 'is-primary': repeatDays.includes(day) }"
+                  @click="toggleDay(day)"
+                >
+                  {{ day }}
+                </button>
+              </div>
             </div>
-          </div>
-        </section>
 
-        <!-- Footer -->
-        <footer class="modal-card-foot is-flex is-justify-content-space-between px-5 py-5">
-          <Button color="primary" label-color="primary" px="5p5" py="2" outlined @click="close">Cancel</Button>
-          <Button color="primary" label-color="light" py="2" style="padding-left: 2.75rem; padding-right: 2.75rem;" @click="done">Done</Button>
-        </footer>
+            <!-- Vibrate -->
+            <div class="is-flex is-justify-content-space-between py-4 mb-2">
+              <span class="has-text-weight-medium">Vibrate</span>
+              <label class="switch toggle">
+                <input type="checkbox" v-model="vibrate" />
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <!-- Ringtone -->
+            <div class="is-flex is-justify-content-space-between is-align-items-center py-4 mb-4">
+              <span class="has-text-weight-medium">Ringtone</span>
+              <div class="has-text-grey is-size-7 is-clickable" @click="setRingtone('Default')">
+                {{ ringtone }} <font-awesome-icon icon="fas fa-chevron-right" class="ml-2" />
+              </div>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <footer class="modal-card-foot is-flex is-justify-content-space-between px-5 py-5">
+            <Button color="primary" label-color="primary" px="5p5" py="2" outlined @click="close"
+              >Cancel</Button
+            >
+            <Button
+              color="primary"
+              label-color="light"
+              py="2"
+              style="padding-left: 2.75rem; padding-right: 2.75rem"
+              @click="done"
+              >Done</Button
+            >
+          </footer>
+        </div>
       </div>
-    </div>
-  </transition>
+    </transition>
+  </Teleport>
 </template>
 
 <style scoped>
-.modal-fade-enter-active,
+/* .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.5s ease;
 }
@@ -126,11 +136,39 @@ function togglePeriod() {
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
+} */
+
+/* Vue transition class for slide-up effect */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
-.reminder-modal {
-  border-radius: 1.25rem;
-  max-width: 95%;
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  transform: translateY(0%);
+  opacity: 1;
+}
+
+.bottom-modal-content {
+  z-index: 100;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-width: 95vw;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background: white;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  animation: float-up 0.3s ease-out;
 }
 
 .time-scroll {
@@ -214,5 +252,4 @@ input:checked + .slider.round::before {
   top: 50%;
   transform: translateY(-50%);
 }
-
 </style>

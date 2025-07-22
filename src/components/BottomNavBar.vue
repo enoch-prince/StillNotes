@@ -74,7 +74,7 @@ function goTo(path: string) {
   width: 100%;
   /* border-top: 2px solid #cfc0ff; */
   /* border-radius: 1.25rem 1.25rem 0 0; */
-  z-index: 100;
+  z-index: auto;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
