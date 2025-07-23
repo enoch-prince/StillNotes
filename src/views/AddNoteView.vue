@@ -85,29 +85,34 @@ watch([noteTitle, noteContent, selectedColor, fontStyle], () => {
     </div>
 
     <div class="px-5 pb-4">
-        <Button size="small" icon="fa fa-plus" icon-position="right" outlined rounded @click="addVerse">Add verse</Button>
-    </div> 
+      <Button
+        size="small"
+        icon="fa fa-plus"
+        icon-position="right"
+        outlined
+        rounded
+        @click="addVerse"
+        >Add verse</Button
+      >
+    </div>
 
     <!-- Footer / Toolbar -->
     <div class="note-toolbar p-4 is-flex is-justify-content-space-between is-align-items-center">
-      <!-- <div class="buttons has-addons mb-0">
-        <button class="button is-rounded" @click="setFont('default')">
-          <font-awesome-icon icon="fa-solid fa-font" />
-        </button>
-        <button class="button is-rounded" @click="setFont('serif')">
-          <font-awesome-icon icon="fa-solid fa-align-left" />
-        </button>
-      </div> -->
-        <div class="icon-text is-flex-direction-row has-text-black-bis">
-            <span class="icon circle-size has-background-white-alpha-50">
-                <font-awesome-icon icon="fa-solid fa-font"></font-awesome-icon>
-            </span>
-            <span class="icon circle-size has-background-white-alpha-50">
-                <font-awesome-icon icon="fa-solid fa-align-left"></font-awesome-icon>
-            </span>
+      <div class="icon-text is-flex-direction-row has-text-black-bis">
+        <div @click="">
+          <span class="icon circle-size has-background-white-alpha-50">
+            <font-awesome-icon icon="fa-solid fa-font"></font-awesome-icon>
+          </span>
         </div>
 
-      <div class="color-picker is-flex is-align-items-center">
+        <div @click="">
+          <span class="icon circle-size has-background-white-alpha-50">
+            <font-awesome-icon icon="fa-solid fa-align-left"></font-awesome-icon>
+          </span>
+        </div>
+      </div>
+
+      <div class="color-picker is-flex is-align-items-center is-flex-wrap-wrap">
         <span
           v-for="color in colors"
           :key="color"
@@ -149,10 +154,10 @@ watch([noteTitle, noteContent, selectedColor, fontStyle], () => {
 }
 
 .has-background-white-alpha-50 {
-    background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 ::placeholder {
-    color:rgba(255, 255, 255, 0.5)
+  color: rgba(255, 255, 255, 0.5);
 }
 </style>
