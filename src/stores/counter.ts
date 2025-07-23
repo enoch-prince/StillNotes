@@ -78,11 +78,11 @@ export const useSetReminderStore = defineStore('set-reminder', () => {
   const selectedHour = ref(8)
   const selectedMinute = ref(30)
   const selectedPeriod = ref('AM')
-  const repeatDays = ref<string[]>(['M', 'T', 'W', 'T', 'F'])
+  const repeatDays = ref<Number[]>([0, 1, 2, 3, 4])
   const vibrate = ref(true)
   const ringtone = ref('Default')
 
-  function toggleDay(day: string) {
+  function toggleDay(day: Number) {
     if (repeatDays.value.includes(day)) {
       repeatDays.value = repeatDays.value.filter(d => d !== day)
     } else {
