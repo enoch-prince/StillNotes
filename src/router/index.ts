@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import TrendingView from '@/views/TrendingView.vue'
 import SearchView from '@/views/SearchView.vue'
 import SettingsView from '@/views/SettingsView.vue'
+import AddNoteView from '@/views/AddNoteView.vue'
 import { useNavigationStore } from '@/stores/counter'
 
 const router = createRouter({
@@ -22,6 +23,7 @@ const router = createRouter({
     { path: '/trending', name: 'Trending', component: TrendingView },
     { path: '/search', name: 'Search', component: SearchView },
     { path: '/settings', name: 'Settings', component: SettingsView },
+    { path: '/note', name: 'AddNote', component: AddNoteView },
     {
       path: '/about',
       name: 'about',

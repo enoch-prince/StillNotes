@@ -110,3 +110,29 @@ export const useSetReminderStore = defineStore('set-reminder', () => {
     setRingtone
   }
 })
+
+export const useNoteDraftStore = defineStore('noteDraft', {
+  state: () => ({
+    title: '',
+    content: '',
+    color: '#d1c7ff',
+    font: 'default',
+  }),
+  actions: {
+    saveDraft(draft: { title: string; content: string; color: string; font: string }) {
+      this.title = draft.title
+      this.content = draft.content
+      this.color = draft.color
+      this.font = draft.font
+    },
+    updateDraft(draft: Partial<{ title: string; content: string; color: string; font: string }>) {
+      Object.assign(this, draft)
+    },
+    resetDraft() {
+      this.title = ''
+      this.content = ''
+      this.color = '#d1c7ff'
+      this.font = 'default'
+    }
+  }
+})

@@ -7,6 +7,7 @@ import ReminderModal from '@/components/Reminder.vue'
 import SlideUpPromptModal from '@/components/SlideUpPromptModal.vue'
 import { useNavigationStore, useReminderStore } from '@/stores/counter'
 import { computed, ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 
 const user = 'Kwame'
 
@@ -15,6 +16,7 @@ const navStore = useNavigationStore()
 const previousRoute = computed(() => navStore.previousRoute)
 const modalActive = ref(false)
 const showSetReminder = ref(false)
+const router = useRouter()
 
 const modalClasses = computed(() => ({
   'is-active': modalActive.value,
@@ -27,6 +29,7 @@ const handleNav = (id: string) => {
 // floating action buttons
 const handleFab = () => {
   console.log('FAB pressed: Open new note')
+  router.push('/note')
 }
 
 const handleModalYes = () => {
@@ -71,7 +74,7 @@ watchEffect(() => {
         </p>
       </div>
       <div class="has-width-85">
-        <Button color="primary" label-color="white" fullWidth>Write my first note</Button>
+        <Button color="primary" label-color="white" fullWidth @click="handleFab">Write my first note</Button>
       </div>
     </div>
 
