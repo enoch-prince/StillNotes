@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useSetReminderStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
+import InfiniteTimePicker from './InfiniteTimePicker.vue'
 
 defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'save'])
@@ -26,18 +27,17 @@ function togglePeriod() {
   selectedPeriod.value = selectedPeriod.value === 'AM' ? 'PM' : 'AM'
 }
 
-function selectHour(hour: number, event: MouseEvent) {
-  selectedHour.value = hour;
-  const target = event.currentTarget as HTMLElement;
-  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
+// function selectHour(hour: number, event: MouseEvent) {
+//   selectedHour.value = hour
+//   const target = event.currentTarget as HTMLElement
+//   target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+// }
 
-function selectMinute(minute: number, event: MouseEvent) {
-  selectedMinute.value = minute;
-  const target = event.currentTarget as HTMLElement;
-  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
+// function selectMinute(minute: number, event: MouseEvent) {
+//   selectedMinute.value = minute
+//   const target = event.currentTarget as HTMLElement
+//   target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+// }
 </script>
 
 <template>
@@ -51,7 +51,7 @@ function selectMinute(minute: number, event: MouseEvent) {
             <!-- Time Picker -->
             <div class="columns is-mobile is-centered has-text-centered mb-5 time-picker-wrapper">
               <div class="column is-narrow">
-                <div class="time-scroll">
+                <!-- <div class="time-scroll">
                   <div
                     v-for="h in hours"
                     :key="h"
@@ -61,10 +61,11 @@ function selectMinute(minute: number, event: MouseEvent) {
                   >
                     {{ h }}
                   </div>
-                </div>
+                </div> -->
+                <InfiniteTimePicker v-model="selectedHour" :options="hours" />
               </div>
               <div class="column is-narrow">
-                <div class="time-scroll">
+                <!-- <div class="time-scroll">
                   <div
                     v-for="m in minutes"
                     :key="m"
@@ -74,12 +75,13 @@ function selectMinute(minute: number, event: MouseEvent) {
                   >
                     {{ m.toString().padStart(2, '0') }}
                   </div>
-                </div>
+                </div> -->
+                <InfiniteTimePicker v-model="selectedMinute" :options="minutes" padZero />
               </div>
 
               <!-- AM/PM Button Outside Flow -->
               <button
-                class="am-pm-toggle button is-small is-rounded is-transparent"
+                class="am-pm-toggle button is-normal is-rounded is-transparent"
                 @click="togglePeriod"
               >
                 <span> {{ selectedPeriod }} </span>
@@ -91,10 +93,12 @@ function selectMinute(minute: number, event: MouseEvent) {
               <p class="has-text-weight-normal has-text-grey-dark is-size-7 mb-2">REPEAT</p>
               <div class="is-flex is-justify-content-space-between">
                 <div
-                  v-for="day,index in ['M', 'T', 'W', 'T', 'F', 'S', 'S']"
+                  v-for="(day, index) in ['M', 'T', 'W', 'T', 'F', 'S', 'S']"
                   :key="day"
                   class="day-picker-wrapper is-flex is-align-items-center is-justify-content-center is-size-6 has-text-weight-normal"
-                  :class="{ 'has-background-primary has-text-white-bis': repeatDays.includes(index) }"
+                  :class="{
+                    'has-background-primary has-text-white-bis': repeatDays.includes(index),
+                  }"
                   @click="toggleDay(index)"
                 >
                   <span>{{ day }}</span>
@@ -174,7 +178,7 @@ function selectMinute(minute: number, event: MouseEvent) {
   animation: float-up 0.3s ease-out;
 }
 
-.time-scroll {
+/* .time-scroll {
   max-height: 11rem;
   overflow-y: auto;
   display: flex;
@@ -184,23 +188,26 @@ function selectMinute(minute: number, event: MouseEvent) {
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-}
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+} */
 
-.time-unit {
+/* .time-unit {
   font-size: 1.25rem;
   opacity: 0.5;
   scroll-snap-align: center;
   cursor: pointer;
-  /* transition: all 0.2s ease; */
-  transition: transform 0.6s ease, opacity 0.6s ease;
-}
+  transition:
+    transform 0.6s ease,
+    opacity 0.6s ease;
+} */
 
-.time-unit.is-selected {
+/* .time-unit.is-selected {
   font-size: 1.75rem;
   font-weight: bold;
   opacity: 1;
   color: black;
-}
+} */
 
 /* Toggle slider override */
 .switch.toggle {
@@ -254,9 +261,23 @@ input:checked + .slider.round::before {
 
 .am-pm-toggle {
   position: absolute;
-  right: 25%;
+  right: 22%;
   top: 50%;
   transform: translateY(-50%);
+}
+
+@media only screen and (max-width: 360px) {
+   /* CSS styles for screen widths 360px and below */
+  .am-pm-toggle {
+    right: 15%;
+  }
+}
+
+@media screen and (width >= 568px) {
+  /* CSS styles for screen widths 568px and above */
+  .am-pm-toggle {
+    right: 35%;
+  }
 }
 
 .day-picker-wrapper {
@@ -264,15 +285,6 @@ input:checked + .slider.round::before {
   height: 36px;
   border-radius: 50%;
   cursor: pointer;
-  background: #F0F3FD;
+  background: #f0f3fd;
 }
-
-/* @keyframes floatUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-} */
 </style>
