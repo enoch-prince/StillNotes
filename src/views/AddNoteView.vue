@@ -4,16 +4,22 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNoteDraftStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
+import type { Scripture } from '@/custom_types'
 
 const router = useRouter()
 const store = useNoteDraftStore()
 
+const colors = ['#FFA09F', '#75C7F8', '#A795F8', '#6BEEC3', '#F8C715', '#1F7F40']
 const noteTitle = ref(store.title)
 const noteContent = ref(store.content)
-const selectedColor = ref(store.color || '#A795F8')
+const selectedColor = ref(store.color || colors[2])
 const fontStyle = ref(store.font || 'default')
-
-const colors = ['#FFA09F', '#75C7F8', '#A795F8', '#6BEEC3', '#F8C715', '#1F7F40']
+const noteScripture = ref<Scripture[]>([
+  { book: 'Hebrews', chapter: 1, verse: 11 },
+  { book: 'Matthew', chapter: 5, verse: 8 },
+  { book: 'Job', chapter: 9, verse: 4 },
+  { book: 'Luke', chapter: 5, verse: 4 },
+])
 
 function goBack() {
   router.back()
@@ -25,6 +31,7 @@ function goNext() {
     content: noteContent.value,
     color: selectedColor.value,
     font: fontStyle.value,
+    scripture: noteScripture.value,
   })
   //   router.push('/note/preview')
 }
@@ -37,12 +44,13 @@ function setFont(style: string) {
   fontStyle.value = style
 }
 
-watch([noteTitle, noteContent, selectedColor, fontStyle], () => {
+watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
   store.updateDraft({
     title: noteTitle.value,
     content: noteContent.value,
     color: selectedColor.value,
     font: fontStyle.value,
+    scripture: noteScripture.value,
   })
 })
 </script>
@@ -76,12 +84,23 @@ watch([noteTitle, noteContent, selectedColor, fontStyle], () => {
       />
 
       <textarea
-        class="textarea p-0 is-transparent mt-4"
+        class="textarea p-0 is-transparent is-family-secondary mt-4"
         v-model="noteContent"
         rows="10"
         placeholder="I'm reflecting on..."
         style="border: none; background: transparent; resize: none; color: white"
       />
+      <div class="is-flex is-flex-wrap-wrap is-align-items-start" style="gap: 0.5rem;">
+        <div v-for="scripture in noteScripture">
+          <Button
+          size="small"
+          label-color="light"
+          rounded
+          style="background-color: rgba(255, 255, 255, 0.2)"
+          >{{ scripture.book }} {{ scripture.chapter }}:{{ scripture.verse }}</Button
+        >
+        </div>
+      </div>
     </div>
 
     <div class="px-5 pb-4">
@@ -158,6 +177,6 @@ watch([noteTitle, noteContent, selectedColor, fontStyle], () => {
 }
 
 ::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.65);
 }
 </style>

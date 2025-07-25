@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
+import type { Scripture } from '@/custom_types'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
@@ -111,21 +112,25 @@ export const useSetReminderStore = defineStore('set-reminder', () => {
   }
 })
 
+
+
 export const useNoteDraftStore = defineStore('noteDraft', {
   state: () => ({
     title: '',
     content: '',
-    color: '#d1c7ff',
+    color: '',
     font: 'default',
+    scripture: [{}]
   }),
   actions: {
-    saveDraft(draft: { title: string; content: string; color: string; font: string }) {
+    saveDraft(draft: { title: string; content: string; color: string; font: string, scripture: Scripture[] }) {
       this.title = draft.title
       this.content = draft.content
       this.color = draft.color
       this.font = draft.font
+      this.scripture = draft.scripture
     },
-    updateDraft(draft: Partial<{ title: string; content: string; color: string; font: string }>) {
+    updateDraft(draft: Partial<{ title: string; content: string; color: string; font: string; scripture: Scripture[] }>) {
       Object.assign(this, draft)
     },
     resetDraft() {
