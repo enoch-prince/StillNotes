@@ -38,6 +38,7 @@ function goNext() {
 
 function addVerse() {
   console.log('Add verse clicked')
+  router.push('/search')
 }
 
 function setFont(style: string) {
