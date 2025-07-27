@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { useNoteDraftStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import type { Scripture } from '@/custom_types'
+import AppBar from '@/components/AppBar.vue'
 
 const router = useRouter()
 const store = useNoteDraftStore()
@@ -21,9 +22,9 @@ const noteScripture = ref<Scripture[]>([
   { book: 'Luke', chapter: 5, verse: 4 },
 ])
 
-function goBack() {
-  router.back()
-}
+// function goBack() {
+//   router.back()
+// }
 
 function goNext() {
   store.saveDraft({
@@ -59,10 +60,11 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
 <template>
   <div class="add-note-page" :style="{ backgroundColor: selectedColor }">
     <!-- Top App Bar -->
-    <nav class="navbar is-flex is-align-items-center is-transparent py-2 px-4">
+    <!-- <nav class="navbar is-flex is-align-items-center is-transparent py-2 px-4">
       <div class="navbar-brand">
-        <a class="navbar-item" @click="goBack">
-          <font-awesome-icon icon="fa-solid fa-chevron-left fa-lg" />
+        <a class="navbar-item has-text-primary" @click="goBack">
+          <span> <font-awesome-icon icon="fa-solid fa-chevron-left fa-lg" /> </span>
+          <span>Back</span>
         </a>
       </div>
       <div
@@ -73,7 +75,10 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
       <div class="navbar-item">
         <a class="has-text-primary is-size-4 has-text-weight-medium" @click="goNext">Next</a>
       </div>
-    </nav>
+    </nav> -->
+    <AppBar title="New Note">
+        <a class="has-text-primary is-size-4 has-text-weight-medium" @click="goNext">Next</a>
+    </AppBar>
 
     <!-- Note Editor -->
     <div class="p-4" style="height: 100%">
