@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NoteView from '@/components/NoteView.vue';
+import Note from '@/components/Note.vue';
 import ScriptureSelect from '@/components/ScriptureSelect.vue';
 import TagSelect from '@/components/TagSelect.vue';
 import { useNavigationStore } from '@/stores/counter';
@@ -14,13 +14,17 @@ watchEffect(() => {
   if (previousRoute.value?.name === 'add-note') {
     point_to.value = 'scripture'
   }
-  else if (previousRoute.value?.name === 'home') {
+  else if (previousRoute.value?.name === 'home' || previousRoute.value?.name === 'view-note' ) {
     point_to.value = 'notes'
   }
   else {
     point_to.value = 'tags'
   }
 })
+
+const handleViewNoteEvent = (payload: any) => {
+    console.log("Received payload: ", payload)
+}
 
 </script>
 
@@ -34,7 +38,7 @@ watchEffect(() => {
         <ScriptureSelect v-if="point_to === 'scripture'" />
         <TagSelect v-if="point_to === 'tags'" />
         <div v-if="point_to === 'notes'">
-          <NoteView v-for="item in [0, 1, 2, 3, 4]" :id_num="item"/>  
+          <Note v-for="item in [0, 1, 2, 3, 4]" :id_num="item"/>  
         </div>
         
     </div>

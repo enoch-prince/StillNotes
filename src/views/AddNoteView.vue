@@ -60,22 +60,6 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
 <template>
   <div class="add-note-page" :style="{ backgroundColor: selectedColor }">
     <!-- Top App Bar -->
-    <!-- <nav class="navbar is-flex is-align-items-center is-transparent py-2 px-4">
-      <div class="navbar-brand">
-        <a class="navbar-item has-text-primary" @click="goBack">
-          <span> <font-awesome-icon icon="fa-solid fa-chevron-left fa-lg" /> </span>
-          <span>Back</span>
-        </a>
-      </div>
-      <div
-        class="navbar-item is-expanded has-text-centered has-text-weight-bold is-family-secondary"
-      >
-        New Note
-      </div>
-      <div class="navbar-item">
-        <a class="has-text-primary is-size-4 has-text-weight-medium" @click="goNext">Next</a>
-      </div>
-    </nav> -->
     <AppBar title="New Note">
         <a class="has-text-primary is-size-4 has-text-weight-medium" @click="goNext">Next</a>
     </AppBar>

@@ -2,7 +2,8 @@
 import { useRoute, useRouter } from 'vue-router'
 
 const emit = defineEmits<{
-  (e: 'fab'): void
+  (e: 'fab'): void,
+  // (e: 'navi'): (id: string) => void
 }>()
 
 const router = useRouter()
@@ -17,6 +18,7 @@ const navItems = [
 ]
 
 function goTo(path: string) {
+  // emit('navi')
   router.push(path)
 }
 </script>
