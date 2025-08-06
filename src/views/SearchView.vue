@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppBar from '@/components/AppBar.vue';
 import Note from '@/components/Note.vue';
 import ScriptureSelect from '@/components/ScriptureSelect.vue';
 import TagSelect from '@/components/TagSelect.vue';
@@ -22,19 +23,11 @@ watchEffect(() => {
   }
 })
 
-const handleViewNoteEvent = (payload: any) => {
-    console.log("Received payload: ", payload)
-}
-
 </script>
 
 <template>
     <div>
-        <div class="box">
-            <p class="has-text-centered">
-            Search Input
-            </p>
-        </div>
+        <AppBar />
         <ScriptureSelect v-if="point_to === 'scripture'" />
         <TagSelect v-if="point_to === 'tags'" />
         <div v-if="point_to === 'notes'">
