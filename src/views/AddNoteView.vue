@@ -2,19 +2,20 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useNoteDraftStore } from '@/stores/counter'
+import { useNoteDraftStore, useSavedNotesStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import type { Scripture } from '@/custom_types'
 import AppBar from '@/components/AppBar.vue'
 
 const router = useRouter()
-const store = useNoteDraftStore()
+const noteDraftStore = useNoteDraftStore()
+const savedNotesStore = useSavedNotesStore()
 
 const colors = ['#FFA09F', '#75C7F8', '#A795F8', '#6BEEC3', '#F8C715', '#1F7F40']
-const noteTitle = ref(store.title)
-const noteContent = ref(store.content)
-const selectedColor = ref(store.color || colors[2])
-const fontStyle = ref(store.font || 'default')
+const noteTitle = ref(noteDraftStore.title)
+const noteContent = ref(noteDraftStore.content)
+const selectedColor = ref(noteDraftStore.color || colors[2])
+const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>([
   { book: 'Hebrews', chapter: 1, verse: 11 },
   { book: 'Matthew', chapter: 5, verse: 8 },
@@ -22,18 +23,16 @@ const noteScripture = ref<Scripture[]>([
   { book: 'Luke', chapter: 5, verse: 4 },
 ])
 
-// function goBack() {
-//   router.back()
-// }
-
 function goNext() {
-  store.saveDraft({
+  const note = {
     title: noteTitle.value,
     content: noteContent.value,
     color: selectedColor.value,
     font: fontStyle.value,
     scripture: noteScripture.value,
-  })
+  }
+  noteDraftStore.saveDraft(note)
+  // savedNotesStore.addToNotes(note)
   //   router.push('/note/preview')
 }
 
@@ -47,7 +46,7 @@ function setFont(style: string) {
 }
 
 watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
-  store.updateDraft({
+  noteDraftStore.updateDraft({
     title: noteTitle.value,
     content: noteContent.value,
     color: selectedColor.value,

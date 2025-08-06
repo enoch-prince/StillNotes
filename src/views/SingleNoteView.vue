@@ -3,9 +3,7 @@ import AppBar from '@/components/AppBar.vue';
 import Note from '@/components/Note.vue';
 import { onMounted, ref, watchEffect } from 'vue';
 
-// const handleViewNoteEvent = (payload: any) => {
-//     console.log("Received payload: ", payload)
-// }
+
 
 const props = defineProps<{noteId: string}>()
 
@@ -22,8 +20,7 @@ onMounted(() => {
         <span> <font-awesome-icon icon="fa-solid fa-ellipsis fa-lg" /> </span>
       </a>
     </AppBar>
-    <!-- <Note full-version @viewNoteEvent="handleViewNoteEvent"/> -->
-    <Note full-version/>
+    <Note :id_num="Number(noteId)" full-version/>
   </div>
 </template>
 
