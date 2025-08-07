@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
-import type { INote, Scripture } from '@/custom_types'
+import type { INote, IRecent, Scripture } from '@/custom_types'
 import { useLocalStorage } from '@vueuse/core'
 
 export const useCounterStore = defineStore('counter', () => {
@@ -150,8 +150,48 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
     if (indexToRemove !== -1) {
       notes.value.splice(indexToRemove, 1)
     }
-    notes.value.splice(indexToRemove, 1)
   }
 
   return { notes, addToNotes, removeFromNotes }
+})
+
+
+export const useRecentScriptureStore = defineStore('recentScripture', () => {
+  const numOfItemsToReturn = 6
+  const numOfDays = 15
+  const recentScripture = ref<IRecent[]>([])
+
+  const addToRecent = (recent: IRecent) => {
+    const indexToRemove = recentScripture.value.findIndex((scripture) => scripture.id === recent.id)
+
+    if (indexToRemove === -1) {
+      recentScripture.value.unshift(recent)
+    }
+    else {
+      console.log(`${recent.label} already added to recent`)
+    }
+    // recentScripture.value.unshift(recent)
+  }
+
+  const dateThreshold = computed(() => {
+    const threshold = new Date()
+    const today = new Date()
+
+    return threshold.setDate(today.getDate() - numOfDays)
+  })
+
+  const removeOldItems = () => {
+    recentScripture.value = recentScripture.value.filter(item => item.timestamp < dateThreshold)
+  }
+
+  const getNMostRecent = computed(() => {
+    if (recentScripture.value.length > numOfItemsToReturn) {
+      return recentScripture.value.slice(numOfItemsToReturn)
+    }
+    else {
+      return recentScripture.value
+    }
+  })
+
+  return {recentScripture, getNMostRecent, addToRecent, removeOldItems}
 })

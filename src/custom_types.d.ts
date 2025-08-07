@@ -12,3 +12,10 @@ export interface INote {
   font: string
   scripture: Scripture[]
 }
+
+
+export interface IRecent {
+  id: string
+  label: string
+  timestamp: DateTime
+}

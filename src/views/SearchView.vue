@@ -11,6 +11,8 @@ const point_to = ref<PointTo>(null);
 const navStore = useNavigationStore()
 const previousRoute = computed(() => navStore.previousRoute)
 
+const searchWord = ref('')
+
 watchEffect(() => {
   if (previousRoute.value?.name === 'add-note') {
     point_to.value = 'scripture'
@@ -27,11 +29,11 @@ watchEffect(() => {
 
 <template>
     <div>
-        <AppBar />
-        <ScriptureSelect v-if="point_to === 'scripture'" />
-        <TagSelect v-if="point_to === 'tags'" />
+        <AppBar v-model="searchWord"/> <!-- By default AppBar comes with a search input -->
+        <ScriptureSelect v-if="point_to === 'scripture'" :scripture-search="searchWord"/>
+        <TagSelect v-if="point_to === 'tags'" :tag-search="searchWord" />
         <div v-if="point_to === 'notes'">
-          <Note v-for="item in [0, 1, 2, 3, 4]" :id_num="item"/>  
+          <Note v-for="item in [0, 1, 2, 3, 4]" :key="item" :id_num="item"/>  
         </div>
         
     </div>

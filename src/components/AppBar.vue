@@ -29,6 +29,8 @@ const router = useRouter()
 const goBack = () => {
   router.back()
 }
+
+const model = defineModel()
 </script>
 
 <template>
@@ -50,7 +52,7 @@ const goBack = () => {
       class="navbar-item is-expanded has-text-centered has-text-weight-bold is-family-secondary"
     >
       <div class="control">
-        <input class="input" type="text" placeholder="Search" />
+        <input class="input" type="text" placeholder="Search" v-model="model" />
       </div>
     </div>
     <div v-if="title" class="navbar-item">
