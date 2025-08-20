@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
-import type { INote, IRecent, Scripture } from '@/custom_types'
+import type { BibleBook, INote, IRecent, Scripture } from '@/custom_types'
 import { useLocalStorage } from '@vueuse/core'
 
 export const useCounterStore = defineStore('counter', () => {
@@ -110,13 +110,18 @@ export const useSetReminderStore = defineStore('set-reminder', () => {
 })
 
 export const useNoteDraftStore = defineStore('noteDraft', {
-  state: () => ({
-    title: '',
-    content: '',
-    color: '',
-    font: 'default',
-    scripture: [{}],
-  }),
+  state: () =>
+    useLocalStorage<INote>(
+      'note-draft',
+      {
+        title: '',
+        content: '',
+        color: '',
+        font: 'default',
+        scripture: [],
+      },
+      { mergeDefaults: true },
+    ),
   actions: {
     saveDraft(draft: INote) {
       this.title = draft.title
@@ -138,7 +143,7 @@ export const useNoteDraftStore = defineStore('noteDraft', {
 })
 
 export const useSavedNotesStore = defineStore('savedNotes', () => {
-  const notes = useLocalStorage('notes', [{} as INote], { mergeDefaults: true })
+  const notes = useLocalStorage<INote[]>('notes', [], { mergeDefaults: true })
 
   const addToNotes = (note: INote) => {
     notes.value.push(note)
@@ -155,7 +160,6 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
   return { notes, addToNotes, removeFromNotes }
 })
 
-
 export const useRecentScriptureStore = defineStore('recentScripture', () => {
   const numOfItemsToReturn = 6
   const numOfDays = 15
@@ -166,8 +170,7 @@ export const useRecentScriptureStore = defineStore('recentScripture', () => {
 
     if (indexToRemove === -1) {
       recentScripture.value.unshift(recent)
-    }
-    else {
+    } else {
       console.log(`${recent.label} already added to recent`)
     }
     // recentScripture.value.unshift(recent)
@@ -181,17 +184,27 @@ export const useRecentScriptureStore = defineStore('recentScripture', () => {
   })
 
   const removeOldItems = () => {
-    recentScripture.value = recentScripture.value.filter(item => item.timestamp < dateThreshold)
+    recentScripture.value = recentScripture.value.filter((item) => item.timestamp < dateThreshold)
   }
 
   const getNMostRecent = computed(() => {
     if (recentScripture.value.length > numOfItemsToReturn) {
       return recentScripture.value.slice(numOfItemsToReturn)
-    }
-    else {
+    } else {
       return recentScripture.value
     }
   })
 
-  return {recentScripture, getNMostRecent, addToRecent, removeOldItems}
+  return { recentScripture, getNMostRecent, addToRecent, removeOldItems }
+})
+
+export const useSearchedScriptureStore = defineStore('searchedScripture', () => {
+  const bibleBook = ref<BibleBook>({ book: null, chapterData: null })
+
+  const set = (searched: BibleBook) => {
+    bibleBook.value.book = searched.book
+    bibleBook.value.chapterData = searched.chapterData
+  }
+
+  return { bibleBook, set }
 })

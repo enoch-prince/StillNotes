@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import AppBar from '@/components/AppBar.vue';
 import Note from '@/components/Note.vue';
-import ScriptureSelect from '@/components/ScriptureSelect.vue';
+import ScriptureSearch from '@/components/ScriptureSearch.vue';
 import TagSelect from '@/components/TagSelect.vue';
 import { useNavigationStore } from '@/stores/counter';
 import { computed, ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 
 type PointTo = 'notes' | 'scripture' | 'tags' | null
 const point_to = ref<PointTo>(null);
@@ -25,12 +26,19 @@ watchEffect(() => {
   }
 })
 
+const router = useRouter()
+
+const goBack = () => {
+  router.back()
+}
+
+
 </script>
 
 <template>
     <div>
-        <AppBar v-model="searchWord"/> <!-- By default AppBar comes with a search input -->
-        <ScriptureSelect v-if="point_to === 'scripture'" :scripture-search="searchWord"/>
+        <AppBar v-model="searchWord" @back="goBack"/> <!-- By default AppBar without 'title' prop comes with a search input -->
+        <ScriptureSearch v-if="point_to === 'scripture'" :scripture-search="searchWord"/>
         <TagSelect v-if="point_to === 'tags'" :tag-search="searchWord" />
         <div v-if="point_to === 'notes'">
           <Note v-for="item in [0, 1, 2, 3, 4]" :key="item" :id_num="item"/>  

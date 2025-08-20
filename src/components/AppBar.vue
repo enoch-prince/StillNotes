@@ -20,15 +20,13 @@ const props = defineProps<{
   iconColor?: IconColor
 }>()
 
+const emit = defineEmits<{
+  (e: 'back', event: MouseEvent): void
+}>()
+
 const iconClasses = computed(() => ({
   [`has-text-${props.iconColor}`]: props.iconColor,
 }))
-
-const router = useRouter()
-
-const goBack = () => {
-  router.back()
-}
 
 const model = defineModel()
 </script>
@@ -36,7 +34,7 @@ const model = defineModel()
 <template>
   <nav class="navbar is-flex is-align-items-center is-transparent py-2 px-4 mb-5">
     <div class="navbar-brand">
-      <a class="navbar-item" :class="iconClasses" @click="goBack">
+      <a class="navbar-item" :class="iconClasses" @click="emit('back', $event)">
         <span> <font-awesome-icon icon="fa-solid fa-chevron-left fa-lg" /> </span>
         <span v-if="hasBackIconLabel" class="is-family-secondary">Back</span>
       </a>
@@ -63,6 +61,10 @@ const model = defineModel()
 
 <style scoped>
 nav {
-  filter: drop-shadow(#EFEEF0 0 1px 0);
+  filter: drop-shadow(#efeef0 0 1px 0);
+}
+
+.svg-inline--fa {
+  vertical-align: -0.25em;
 }
 </style>

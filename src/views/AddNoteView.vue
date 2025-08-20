@@ -16,33 +16,28 @@ const noteTitle = ref(noteDraftStore.title)
 const noteContent = ref(noteDraftStore.content)
 const selectedColor = ref(noteDraftStore.color || colors[2])
 const fontStyle = ref(noteDraftStore.font || 'default')
-const noteScripture = ref<Scripture[]>([
-  { book: 'Hebrews', chapter: 1, verse: 11 },
-  { book: 'Matthew', chapter: 5, verse: 8 },
-  { book: 'Job', chapter: 9, verse: 4 },
-  { book: 'Luke', chapter: 5, verse: 4 },
-])
+const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 
 function goNext() {
-  const note = {
-    title: noteTitle.value,
-    content: noteContent.value,
-    color: selectedColor.value,
-    font: fontStyle.value,
-    scripture: noteScripture.value,
-  }
-  noteDraftStore.saveDraft(note)
-  // savedNotesStore.addToNotes(note)
+  savedNotesStore.addToNotes(noteDraftStore.$state)
   //   router.push('/note/preview')
 }
 
 function addVerse() {
   console.log('Add verse clicked')
-  router.push('/search')
+  router.push({ name: 'search' })
 }
 
 function setFont(style: string) {
   fontStyle.value = style
+}
+
+function testDblclick() {
+  console.log('Double Click Event')
+}
+
+const goBack = () => {
+  router.back()
 }
 
 watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
@@ -59,13 +54,14 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
 <template>
   <div class="add-note-page" :style="{ backgroundColor: selectedColor }">
     <!-- Top App Bar -->
-    <AppBar title="New Note">
-        <a class="has-text-primary is-size-4 has-text-weight-medium" @click="goNext">Next</a>
+    <AppBar title="New Note" @back="goBack">
+      <a class="has-text-primary is-size-4 has-text-weight-medium" @click="goNext">Next</a>
     </AppBar>
 
     <!-- Note Editor -->
     <div class="p-4" style="height: 100%">
       <input
+        name="title"
         class="input p-0 is-size-3 is-transparent has-text-white has-text-weight-semibold"
         v-model="noteTitle"
         placeholder="Title"
@@ -79,16 +75,18 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
         placeholder="I'm reflecting on..."
         style="border: none; background: transparent; resize: none; color: white"
       />
-      <div class="is-flex is-flex-wrap-wrap is-align-items-start" style="gap: 0.5rem;">
-        <div v-for="scripture in noteScripture">
+      <div class="is-flex is-flex-wrap-wrap is-align-items-start" style="gap: 0.5rem">
           <Button
-          size="small"
-          label-color="light"
-          rounded
-          style="background-color: rgba(255, 255, 255, 0.2)"
-          >{{ scripture.book }} {{ scripture.chapter }}:{{ scripture.verse }}</Button
-        >
-        </div>
+            v-for="scripture in noteScripture"
+            size="small"
+            label-color="light"
+            rounded
+            style="background-color: rgba(255, 255, 255, 0.2)"
+            @dblclick="testDblclick"
+            @click="console.log('Single Click')"
+          >
+            {{ scripture.book }} {{ scripture.chapter }}:{{ scripture.verse }}
+          </Button>
       </div>
     </div>
 
@@ -147,6 +145,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
 .note-toolbar {
   border-top: 2px solid rgba(255, 255, 255, 1);
   background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   position: sticky;
   bottom: 0;

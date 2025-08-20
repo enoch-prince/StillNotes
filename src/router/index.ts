@@ -7,6 +7,7 @@ import SettingsView from '@/views/SettingsView.vue'
 import AddNoteView from '@/views/AddNoteView.vue'
 import { useNavigationStore } from '@/stores/counter'
 import SingleNoteView from '@/views/SingleNoteView.vue'
+import ScriptureView from '@/views/ScriptureView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,7 @@ const router = createRouter({
     { path: '/settings', name: 'settings', component: SettingsView },
     { path: '/note', name: 'add-note', component: AddNoteView },
     { path: '/note/:noteId', name: 'view-note', component: SingleNoteView, props: true },
+    { path: '/note/scripture', name: 'scripture', component: ScriptureView },
     {
       path: '/about',
       name: 'about',

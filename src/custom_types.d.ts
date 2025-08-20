@@ -4,6 +4,13 @@ export interface Scripture {
   verse: number
 }
 
+export interface BibleBook {
+  book: string | null
+  chapterData: {
+    [key: string]: number[]
+  } | null
+}
+
 export interface INote {
   id?: string
   title: string

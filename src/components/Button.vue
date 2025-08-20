@@ -120,7 +120,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (e: 'click', event: MouseEvent): void
+  (e: 'click', event: MouseEvent): void,
+  (e: 'dblclick', event: MouseEvent): void,
 }>()
 
 const showIcon = computed(() => props.icon || !!useSlots().icon)
@@ -185,6 +186,7 @@ const labelColorClass = computed(() => ({
     :class="[buttonClasses, paddingClasses]"
     :disabled="disabled || loading"
     @click="emit('click', $event)"
+    @dblclick="emit('dblclick', $event)"
   >
     <template v-if="iconPosition === 'left'">
       <span v-if="showIcon" class="icon" :class="[iconSizeClass, iconMarginClasses]">
