@@ -4,7 +4,7 @@ import AppBar from '@/components/AppBar.vue'
 import type { Scripture } from '@/custom_types'
 import { useNoteDraftStore, useSearchedScriptureStore } from '@/stores/counter'
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
+import { generateId } from '@/utils'
 
 const showChapterModal = ref(true)
 const appTitle = computed(() => (showChapterModal.value ? 'Chapter' : 'Verse'))
@@ -15,6 +15,7 @@ const chapters = computed(() => Object.keys(searchedScriptureStore.bibleBook.cha
 const verses = computed(
   () => searchedScriptureStore.bibleBook.chapterData![String(selected.value.chapter)],
 )
+const scriptureId = computed(() => generateId(selected.value.book, selected.value.chapter, selected.value.verse))
 
 const router = useRouter()
 const noteDraft = useNoteDraftStore()
@@ -25,6 +26,7 @@ const getSelectedChapter = (param: string) => {
 }
 const getSelectedVerse = (param: number) => {
   selected.value.verse = param
+  selected.value.id = scriptureId.value
   // navigate to add-note views
   noteDraft.scripture.push(selected.value)
   router.push({name: 'add-note'})

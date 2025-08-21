@@ -1,4 +1,5 @@
 export interface Scripture {
+  id?: string
   book: string
   chapter: number
   verse: number

@@ -32,8 +32,12 @@ function setFont(style: string) {
   fontStyle.value = style
 }
 
-function testDblclick() {
-  console.log('Double Click Event')
+function removeScripture(id: string) {
+  const indexToRemove = noteScripture.value.findIndex((scripture) => scripture.id === id)
+  if (indexToRemove !== -1) {
+    noteScripture.value.splice(indexToRemove, 1)
+    console.log('Scripture Removed')
+  }
 }
 
 const goBack = () => {
@@ -69,24 +73,26 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
       />
 
       <textarea
+        id="note"
         class="textarea p-0 is-transparent is-family-secondary mt-4"
         v-model="noteContent"
         rows="10"
         placeholder="I'm reflecting on..."
         style="border: none; background: transparent; resize: none; color: white"
       />
-      <div class="is-flex is-flex-wrap-wrap is-align-items-start" style="gap: 0.5rem">
-          <Button
-            v-for="scripture in noteScripture"
-            size="small"
-            label-color="light"
-            rounded
-            style="background-color: rgba(255, 255, 255, 0.2)"
-            @dblclick="testDblclick"
-            @click="console.log('Single Click')"
-          >
-            {{ scripture.book }} {{ scripture.chapter }}:{{ scripture.verse }}
-          </Button>
+      <div class="tags">
+        <span
+          v-for="scripture in noteScripture"
+          class="tag is-rounded has-text-white is-family-secondary py-1"
+          style="background-color: rgba(255, 255, 255, 0.2)"
+          >{{ scripture.book }} {{ scripture.chapter }}:{{ scripture.verse }}
+          <button
+            class="delete is-small"
+            @click="removeScripture(scripture.id!)"
+            aria-label="delete"
+            title="delete"
+          ></button>
+        </span>
       </div>
     </div>
 
