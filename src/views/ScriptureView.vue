@@ -10,12 +10,18 @@ const showChapterModal = ref(true)
 const appTitle = computed(() => (showChapterModal.value ? 'Chapter' : 'Verse'))
 
 const searchedScriptureStore = useSearchedScriptureStore()
-const selected = ref<Scripture>({ book: searchedScriptureStore.bibleBook.book!, chapter: 0, verse: 0 })
+const selected = ref<Scripture>({
+  book: searchedScriptureStore.bibleBook.book!,
+  chapter: 0,
+  verse: 0,
+})
 const chapters = computed(() => Object.keys(searchedScriptureStore.bibleBook.chapterData!))
 const verses = computed(
   () => searchedScriptureStore.bibleBook.chapterData![String(selected.value.chapter)],
 )
-const scriptureId = computed(() => generateId(selected.value.book, selected.value.chapter, selected.value.verse))
+const scriptureId = computed(() =>
+  generateId(selected.value.book, selected.value.chapter, selected.value.verse),
+)
 
 const router = useRouter()
 const noteDraft = useNoteDraftStore()
@@ -27,14 +33,10 @@ const getSelectedChapter = (param: string) => {
 const getSelectedVerse = (param: number) => {
   selected.value.verse = param
   selected.value.id = scriptureId.value
-  // navigate to add-note views
   noteDraft.scripture.push(selected.value)
-  router.push({name: 'add-note'})
+  // navigate to add-note views
+  router.push({ name: 'add-note' })
 }
-
-// watch(selected, (newSelected) => {
-//   console.log("Selected Scripture: ", newSelected)
-// })
 </script>
 
 <template>

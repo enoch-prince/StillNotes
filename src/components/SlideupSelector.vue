@@ -1,58 +1,58 @@
 <script setup lang="ts">
-import AppBar from './AppBar.vue';
+import { computed } from 'vue'
 
-defineProps<{
+const props = defineProps<{
+  modelValue: boolean
   hasModalBackground?: boolean
+  modalBackgroundTransparent?: boolean
 }>()
 
-const emit = defineEmits(['update:modelValue', 'no'])
+const modalBackgroundClasses = computed(() => {
+  if (props.modalBackgroundTransparent) return 'modal-background-transparent'
+  else return 'modal-background'
+})
+
+const emit = defineEmits(['update:modelValue'])
 
 function close() {
   emit('update:modelValue', false)
 }
-
-function handleNo() {
-  emit('no')
-  close()
-}
 </script>
 
 <template>
-  <!-- <Teleport to="body">
-    <transition name="slide-up"> -->
-      <div>
-        <div v-if="hasModalBackground" class="" @click="handleNo"></div>
-        <AppBar v-else title="Chapter" @back="handleNo"/>
-        <div
+  <Teleport to="body">
+    <transition name="slide-up">
+      <div v-if="modelValue" class="modal is-active">
+        <div v-show="hasModalBackground" :class="modalBackgroundClasses" @click="close"></div>
+        <!-- <div
           :class="{'modal-content is-flex-direction-column': hasModalBackground}"  
           class="bottom-modal-content is-flex is-justify-content-center is-align-items-center p-5"
-        >
-          <div class="mb-5">
-            <slot name="content" />
-          </div>
-          <div class="is-flex is-justify-content-space-between" style="width: 100%">
-            <slot name="buttons" />
-          </div>
+        > -->
+        <div class="modal-card bottom-modal-content">
+          <slot></slot>
         </div>
 
-        <button v-if="hasModalBackground" class="modal-close is-large" aria-label="close" @click="handleNo"></button>
+        <button
+          v-if="hasModalBackground"
+          class="modal-close is-large"
+          aria-label="close"
+          @click="close"
+        ></button>
       </div>
-    <!-- </transition>
-  </Teleport> -->
+    </transition>
+  </Teleport>
 </template>
 
 <style scoped>
 .bottom-modal-content {
-  /* position: fixed; */
-  /* bottom: 0; */
-  /* left: 0; */
-  /* border-top-left-radius: 1rem; */
-  /* border-top-right-radius: 1rem; */
+  z-index: 100;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   max-width: 100vw;
-  height: 100%;
-  /* padding: 1.5rem; */
-  /* width: 85%; */
-  /* border-radius: 1rem; */
+  min-height: calc(0.3 * 100vh);
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
   background: white;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   animation: float-up 0.3s ease-out;
@@ -75,5 +75,14 @@ function handleNo() {
 .slide-up-leave-from {
   transform: translateY(0%);
   opacity: 1;
+}
+
+.modal-background-transparent {
+  background-color: hsla(220, 14%, 4%, 0.386);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 </style>

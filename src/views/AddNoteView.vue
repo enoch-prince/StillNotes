@@ -6,6 +6,7 @@ import { useNoteDraftStore, useSavedNotesStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import type { Scripture } from '@/custom_types'
 import AppBar from '@/components/AppBar.vue'
+import SlideupSelector from '@/components/SlideupSelector.vue'
 
 const router = useRouter()
 const noteDraftStore = useNoteDraftStore()
@@ -18,8 +19,11 @@ const selectedColor = ref(noteDraftStore.color || colors[2])
 const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 
+const modalActive = ref(false)
+
 function goNext() {
-  savedNotesStore.addToNotes(noteDraftStore.$state)
+  modalActive.value = true;
+  // savedNotesStore.addToNotes(noteDraftStore.$state)
   //   router.push('/note/preview')
 }
 
@@ -137,6 +141,21 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
         ></span>
       </div>
     </div>
+    <SlideupSelector v-model="modalActive" :has-modal-background="true" :modal-background-transparent="true">
+      <div class="p-4">
+        <div class="mt-4">
+          <div class="px-2 py-4 mb-2">
+            Make Public ==> Slide Toggle
+          </div>
+          <div class="px-2 py-4">
+            Set Reminder ==> Not Set >
+          </div>
+          <div class="px-2 py-4">
+            Tag Note ==> Note Set >
+          </div>
+        </div>
+      </div>
+    </SlideupSelector>
   </div>
 </template>
 
