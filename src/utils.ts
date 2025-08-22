@@ -65,3 +65,14 @@ export function generateId(bookName: string, chapterNum:number|null = null, vers
     return `${bookId}-${chapterNum}-${verseNum}` // Verse ID (e.g., "1jn-2-15")
   }
 }
+
+
+
+export function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}

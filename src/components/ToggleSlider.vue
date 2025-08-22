@@ -9,7 +9,7 @@ function updateValue(event: Event) {
 </script>
 
 <template>
-  <div class="is-flex is-justify-content-space-between py-4 mb-2">
+  <div class="is-flex is-justify-content-space-between">
     <span class="is-family-secondary has-text-weight-medium">{{ label }}</span>
     <label class="switch toggle">
       <input 
