@@ -2,7 +2,8 @@
 import { storeToRefs } from 'pinia'
 import { useSetReminderStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
-import InfiniteTimePicker from './InfiniteTimePicker.vue'
+import InfiniteTimePicker from '@/components/InfiniteTimePicker.vue'
+import ToggleSlider from '@/components/ToggleSlider.vue'
 
 defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'save'])
@@ -107,13 +108,7 @@ function togglePeriod() {
             </div>
 
             <!-- Vibrate -->
-            <div class="is-flex is-justify-content-space-between py-4 mb-2">
-              <span class="has-text-weight-medium">Vibrate</span>
-              <label class="switch toggle">
-                <input type="checkbox" v-model="vibrate" />
-                <span class="slider round"></span>
-              </label>
-            </div>
+            <ToggleSlider label="Vibrate" v-model="vibrate" />
 
             <!-- Ringtone -->
             <div class="is-flex is-justify-content-space-between is-align-items-center py-4 mb-4">
@@ -176,83 +171,6 @@ function togglePeriod() {
   background: white;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   animation: float-up 0.3s ease-out;
-}
-
-/* .time-scroll {
-  max-height: 11rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-} */
-
-/* .time-unit {
-  font-size: 1.25rem;
-  opacity: 0.5;
-  scroll-snap-align: center;
-  cursor: pointer;
-  transition:
-    transform 0.6s ease,
-    opacity 0.6s ease;
-} */
-
-/* .time-unit.is-selected {
-  font-size: 1.75rem;
-  font-weight: bold;
-  opacity: 1;
-  color: black;
-} */
-
-/* Toggle slider override */
-.switch.toggle {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 22px;
-}
-
-.switch.toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider.round {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.6s;
-  border-radius: 34px;
-}
-
-.slider.round::before {
-  position: absolute;
-  content: '';
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.6s;
-  border-radius: 50%;
-}
-
-input:checked + .slider.round {
-  background-color: #bcaaff;
-}
-
-input:checked + .slider.round::before {
-  transform: translateX(18px);
 }
 
 .time-picker-wrapper {
