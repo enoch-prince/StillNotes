@@ -7,6 +7,7 @@ import Button from '@/components/Button.vue'
 import type { Scripture } from '@/custom_types'
 import AppBar from '@/components/AppBar.vue'
 import SlideupSelector from '@/components/SlideupSelector.vue'
+import ToggleSlider from '@/components/ToggleSlider.vue'
 
 const router = useRouter()
 const noteDraftStore = useNoteDraftStore()
@@ -20,6 +21,7 @@ const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 
 const modalActive = ref(false)
+const makePublic = ref(false)
 
 function goNext() {
   modalActive.value = true;
@@ -145,7 +147,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
       <div class="p-4">
         <div class="mt-4">
           <div class="px-2 py-4 mb-2">
-            Make Public ==> Slide Toggle
+            <ToggleSlider label="Make Public" v-model="makePublic" />
           </div>
           <div class="px-2 py-4">
             Set Reminder ==> Not Set >
