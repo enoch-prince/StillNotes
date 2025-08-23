@@ -26,4 +26,5 @@ export interface IRecent {
   id: string
   label: string
   timestamp: DateTime
+  data: BibleBook
 }
