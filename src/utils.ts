@@ -76,3 +76,7 @@ export function formatDate(date: Date) {
     year: 'numeric'
   });
 }
+
+
+export const Hours = Array.from({ length: 12 }, (_, i) => i + 1)
+export const Minutes = Array.from({ length: 60 }, (_, i) => i)

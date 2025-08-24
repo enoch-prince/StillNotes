@@ -114,7 +114,7 @@ const props = defineProps({
     default: undefined,
   },
   labelColor: {
-    type: String as () => ButtonColor,
+    type: String as () => ButtonColor | string,
     default: undefined,
   },
 })

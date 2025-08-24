@@ -208,3 +208,23 @@ export const useSearchedScriptureStore = defineStore('searchedScripture', () => 
 
   return { bibleBook, set }
 })
+
+
+export const useNoteReminderStore = defineStore('noteReminder', () => {
+  const dateToday = ref<Date>(new Date())
+  const hour = ref<number>(4)
+  const minute = ref<number>(5)
+  const period = ref<string>('PM')
+
+  const togglePeriod = () => {
+    period.value = period.value === 'AM' ? 'PM':'AM'
+  }
+
+  const resetNoteReminder = () => {
+    hour.value = 0;
+    minute.value = 0;
+    period.value = 'PM'
+  }
+
+  return { dateToday, hour, minute, period, togglePeriod, resetNoteReminder }
+})

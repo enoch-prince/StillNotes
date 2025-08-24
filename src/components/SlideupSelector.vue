@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 
 const props = defineProps<{
   modelValue: boolean
   hasModalBackground?: boolean
   modalBackgroundTransparent?: boolean
 }>()
+
+const showBackgroundContent = computed(() => props.hasModalBackground || !!useSlots().extra)
 
 const modalBackgroundClasses = computed(() => {
   if (props.modalBackgroundTransparent) return 'modal-background-transparent'
@@ -23,7 +25,11 @@ function close() {
   <Teleport to="body">
     <transition name="slide-up">
       <div v-if="modelValue" class="modal is-active">
-        <div v-show="hasModalBackground" :class="modalBackgroundClasses" @click="close"></div>
+        <div v-show="hasModalBackground" :class="modalBackgroundClasses" @click="close">
+          <div v-if="showBackgroundContent">
+            <slot name="extra"></slot>
+          </div>
+        </div>
         <!-- <div
           :class="{'modal-content is-flex-direction-column': hasModalBackground}"  
           class="bottom-modal-content is-flex is-justify-content-center is-align-items-center p-5"
@@ -78,7 +84,7 @@ function close() {
 }
 
 .modal-background-transparent {
-  background-color: hsla(220, 14%, 4%, 0.386);
+  background-color: hsla(220, 14%, 4%, 0.219);
   bottom: 0;
   left: 0;
   position: absolute;

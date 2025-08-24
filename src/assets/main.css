@@ -126,6 +126,27 @@
   border-color: transparent;
   box-shadow: none;
 }
+
+.am-pm-toggle {
+  position: absolute;
+  right: 22%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media only screen and (max-width: 360px) {
+   /* CSS styles for screen widths 360px and below */
+  .am-pm-toggle {
+    right: 15%;
+  }
+}
+
+@media screen and (width >= 568px) {
+  /* CSS styles for screen widths 568px and above */
+  .am-pm-toggle {
+    right: 35%;
+  }
+}
 /* Fonts:
 Comforta for headers
 Plus Jakarta sans  for body text

@@ -4,6 +4,7 @@ import { useSetReminderStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import InfiniteTimePicker from '@/components/InfiniteTimePicker.vue'
 import ToggleSlider from '@/components/ToggleSlider.vue'
+import { Hours, Minutes } from '@/utils'
 
 defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'save'])
@@ -11,9 +12,6 @@ const emit = defineEmits(['update:modelValue', 'save'])
 const { selectedHour, selectedMinute, selectedPeriod, repeatDays, vibrate, ringtone } =
   storeToRefs(useSetReminderStore())
 const { toggleDay, setRingtone } = useSetReminderStore()
-
-const hours = Array.from({ length: 12 }, (_, i) => i + 1)
-const minutes = Array.from({ length: 60 }, (_, i) => i)
 
 function close() {
   emit('update:modelValue', false)
@@ -63,7 +61,7 @@ function togglePeriod() {
                     {{ h }}
                   </div>
                 </div> -->
-                <InfiniteTimePicker v-model="selectedHour" :options="hours" />
+                <InfiniteTimePicker v-model="selectedHour" :options="Hours" />
               </div>
               <div class="column is-narrow">
                 <!-- <div class="time-scroll">
@@ -77,7 +75,7 @@ function togglePeriod() {
                     {{ m.toString().padStart(2, '0') }}
                   </div>
                 </div> -->
-                <InfiniteTimePicker v-model="selectedMinute" :options="minutes" padZero />
+                <InfiniteTimePicker v-model="selectedMinute" :options="Minutes" padZero />
               </div>
 
               <!-- AM/PM Button Outside Flow -->
@@ -175,27 +173,6 @@ function togglePeriod() {
 
 .time-picker-wrapper {
   position: relative;
-}
-
-.am-pm-toggle {
-  position: absolute;
-  right: 22%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-@media only screen and (max-width: 360px) {
-   /* CSS styles for screen widths 360px and below */
-  .am-pm-toggle {
-    right: 15%;
-  }
-}
-
-@media screen and (width >= 568px) {
-  /* CSS styles for screen widths 568px and above */
-  .am-pm-toggle {
-    right: 35%;
-  }
 }
 
 .day-picker-wrapper {

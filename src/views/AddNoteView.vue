@@ -2,18 +2,20 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDateStore, useNoteDraftStore, useSavedNotesStore } from '@/stores/counter'
+import { useNoteDraftStore, useNoteReminderStore, useSavedNotesStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import type { Scripture } from '@/custom_types'
 import AppBar from '@/components/AppBar.vue'
 import SlideupSelector from '@/components/SlideupSelector.vue'
 import ToggleSlider from '@/components/ToggleSlider.vue'
-import { formatDate } from '@/utils'
+import InfiniteTimePicker from '@/components/InfiniteTimePicker.vue'
+import { formatDate, Hours, Minutes } from '@/utils'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const noteDraftStore = useNoteDraftStore()
-const savedNotesStore = useSavedNotesStore()
-const dateStore = useDateStore()
+const { dateToday, hour, minute, period } = storeToRefs(useNoteReminderStore())
+const { togglePeriod, resetNoteReminder } = useNoteReminderStore()
 
 const colors = ['#FFA09F', '#75C7F8', '#A795F8', '#6BEEC3', '#F8C715', '#1F7F40']
 const noteTitle = ref(noteDraftStore.title)
@@ -21,7 +23,7 @@ const noteContent = ref(noteDraftStore.content)
 const selectedColor = ref(noteDraftStore.color || colors[2])
 const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
-const today = formatDate(dateStore.today)
+const today = formatDate(dateToday.value)
 
 const modalActive = ref(false)
 const showReminderModal = ref(false)
@@ -52,6 +54,11 @@ function removeScripture(id: string) {
 
 const goBack = () => {
   router.back()
+}
+
+const cancelNoteReminder = () => {
+  showReminderModal.value = false
+  resetNoteReminder()
 }
 
 watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
@@ -152,7 +159,32 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
       :has-modal-background="true"
       :modal-background-transparent="true"
     >
+      <template #extra>
+        <div class="px-4" style="position: absolute; bottom: 37%; width: 100%">
+          <div style="border-top: 2px solid #fff"></div>
+          <div class="pt-4 is-family-secondary">
+            <div class="tags">
+              <div
+                v-for="value in ['Walk', 'Faith', 'Purpose']"
+                class="tag is-rounded"
+                style="background-color: rgba(255, 255, 255, 0.8); gap: 6px"
+              >
+                {{ value }}
+                <span class="has-text-grey"> <font-awesome-icon icon="fas fa-x" /> </span>
+              </div>
+            </div>
+            <p class="mt-4 has-text-light">
+              Reminder set on {{ dateToday.getDate() }}/{{ dateToday.getMonth() }}/{{
+                dateToday.getFullYear()
+              }}, {{ hour }}:{{ minute.toString().padStart(2, '0') }} {{ period }}
+            </p>
+          </div>
+        </div>
+      </template>
       <div class="p-4">
+        <div class="is-flex is-justify-content-center is-align-items-center">
+          <div class="is-flex drag-bar"></div>
+        </div>
         <div class="mt-4">
           <div class="px-2 py-4 mb-2">
             <ToggleSlider label="Make Public" v-model="makePublic" />
@@ -185,28 +217,59 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
       </div>
     </SlideupSelector>
 
-    <SlideupSelector v-model="showReminderModal" :has-modal-background="true" :modal-background-transparent="true">
+    <SlideupSelector
+      v-model="showReminderModal"
+      :has-modal-background="true"
+      :modal-background-transparent="true"
+    >
       <div class="px-4 pt-4 pb-5">
-        <div class="is-flex is-justify-content-center is-align-items-center"><div class="is-flex drag-bar"></div></div>
+        <div class="is-flex is-justify-content-center is-align-items-center">
+          <div class="is-flex drag-bar"></div>
+        </div>
         <div class="mt-4">
           <div class="mb-5">
-            <div class="py-2 bottom-border">
-              <p>{{ today }}</p>
+            <div class="py-2 bottom-border has-text-weight-medium">
+              <p style="color: #827d89">{{ today }}</p>
             </div>
             <div class="mt-2 px-4">
-              Note Reminder scroller goes here
+              <div
+                class="columns is-mobile is-centered has-text-centered"
+                style="position: relative"
+              >
+                <div class="column is-narrow">
+                  <InfiniteTimePicker v-model="hour" :options="Hours" />
+                </div>
+                <div class="column is-narrow">
+                  <InfiniteTimePicker v-model="minute" :options="Minutes" padZero />
+                </div>
+                <div class="column is-narrow">
+                  <Button
+                    class="am-pm-toggle has-text-weight-semibold"
+                    color="transparent"
+                    style="color: #827d89"
+                    @click="togglePeriod"
+                    >{{ period }}</Button
+                  >
+                </div>
+              </div>
             </div>
           </div>
           <div class="is-flex is-justify-content-space-between">
-            <Button color="primary" label-color="primary" px="5p5" py="2" outlined @click="showReminderModal=false"
+            <Button
+              color="primary"
+              label-color="primary"
+              py="2"
+              style="padding-left: 2.345rem; padding-right: 2.345rem"
+              outlined
+              @click="cancelNoteReminder"
               >Cancel</Button
             >
             <Button
               color="primary"
               label-color="light"
               py="2"
-              style="padding-left: 2.75rem; padding-right: 2.75rem"
-              @click=""
+              style="padding-left: 2.7rem; padding-right: 2.7rem"
+              @click="showReminderModal = false"
               >Done</Button
             >
           </div>
@@ -260,6 +323,6 @@ div.drag-bar {
   justify-content: center;
   align-items: center; */
   width: 30%;
-  border-bottom: 3px solid #efeef0
+  border-bottom: 3px solid #efeef0;
 }
 </style>
