@@ -25,15 +25,14 @@ function close() {
   <Teleport to="body">
     <transition name="slide-up">
       <div v-if="modelValue" class="modal is-active">
-        <div v-show="hasModalBackground" :class="modalBackgroundClasses" @click="close">
-          <div v-if="showBackgroundContent">
-            <slot name="extra"></slot>
-          </div>
-        </div>
+        <div v-show="hasModalBackground" :class="modalBackgroundClasses" @click="close"></div>
         <!-- <div
           :class="{'modal-content is-flex-direction-column': hasModalBackground}"  
           class="bottom-modal-content is-flex is-justify-content-center is-align-items-center p-5"
         > -->
+        <div v-if="showBackgroundContent">
+            <slot name="extra"></slot>
+        </div>
         <div class="modal-card bottom-modal-content">
           <slot></slot>
         </div>

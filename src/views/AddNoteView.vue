@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useNoteDraftStore, useNoteReminderStore, useSavedNotesStore } from '@/stores/counter'
+import { useGlobalStatesStore, useNoteDraftStore, useNoteReminderStore, useSavedNotesStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import type { Scripture } from '@/custom_types'
 import AppBar from '@/components/AppBar.vue'
@@ -14,6 +14,7 @@ import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const noteDraftStore = useNoteDraftStore()
+const globalStatesStore = useGlobalStatesStore()
 const { dateToday, hour, minute, period } = storeToRefs(useNoteReminderStore())
 const { togglePeriod, resetNoteReminder } = useNoteReminderStore()
 
@@ -24,6 +25,7 @@ const selectedColor = ref(noteDraftStore.color || colors[2])
 const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 const today = formatDate(dateToday.value)
+const tags = ref<string[]>([])
 
 const modalActive = ref(false)
 const showReminderModal = ref(false)
@@ -37,6 +39,12 @@ function goNext() {
 
 function addVerse() {
   console.log('Add verse clicked')
+  globalStatesStore.addVerseClicked = true
+  router.push({ name: 'search' })
+}
+
+function addTag() {
+  globalStatesStore.tagNoteClicked = true
   router.push({ name: 'search' })
 }
 
@@ -52,6 +60,14 @@ function removeScripture(id: string) {
   }
 }
 
+function removeTag(tagName: string) {
+  const indexToRemove = tags.value.findIndex((tag) => tag === tagName)
+  if (indexToRemove !== -1) {
+    tags.value.splice(indexToRemove, 1)
+    console.log('Scripture Removed')
+  }
+}
+
 const goBack = () => {
   router.back()
 }
@@ -61,13 +77,14 @@ const cancelNoteReminder = () => {
   resetNoteReminder()
 }
 
-watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
+watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], () => {
   noteDraftStore.updateDraft({
     title: noteTitle.value,
     content: noteContent.value,
     color: selectedColor.value,
     font: fontStyle.value,
     scripture: noteScripture.value,
+    tags: tags.value
   })
 })
 </script>
@@ -86,16 +103,15 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
         class="input p-0 is-size-3 is-transparent has-text-white has-text-weight-semibold"
         v-model="noteTitle"
         placeholder="Title"
-        style="border: none; background: transparent"
+        style="border: none; background: transparent; box-shadow: none;"
       />
 
       <textarea
         id="note"
         class="textarea p-0 is-transparent is-family-secondary mt-4"
         v-model="noteContent"
-        rows="10"
         placeholder="I'm reflecting on..."
-        style="border: none; background: transparent; resize: none; color: white"
+        style="border: none; background: transparent; resize: none; color: white; box-shadow: none;"
       />
       <div class="tags">
         <span
@@ -160,17 +176,17 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
       :modal-background-transparent="true"
     >
       <template #extra>
-        <div class="px-4" style="position: absolute; bottom: 37%; width: 100%">
+        <div class="px-4" style="position: absolute; bottom: 37%; width: 100%; left: 0;">
           <div style="border-top: 2px solid #fff"></div>
           <div class="pt-4 is-family-secondary">
             <div class="tags">
               <div
-                v-for="value in ['Walk', 'Faith', 'Purpose']"
+                v-for="tag in tags"
                 class="tag is-rounded"
                 style="background-color: rgba(255, 255, 255, 0.8); gap: 6px"
               >
-                {{ value }}
-                <span class="has-text-grey"> <font-awesome-icon icon="fas fa-x" /> </span>
+                {{ tag }}
+                <span class="has-text-grey is-clickable" @click="removeTag(tag)"> <font-awesome-icon icon="fas fa-x" /> </span>
               </div>
             </div>
             <p class="mt-4 has-text-light">
@@ -207,7 +223,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture], () => {
                 <span> <font-awesome-icon icon="fa-solid fa-tag fa-lg" /> </span>
                 <span class="ml-2">Tag Note</span>
               </div>
-              <div class="has-text-grey is-size-7 is-clickable">
+              <div class="has-text-grey is-size-7 is-clickable" @click="addTag">
                 <span>Not Set</span>
                 <span class="ml-2"><font-awesome-icon icon="fa-solid fa-chevron-right" /></span>
               </div>

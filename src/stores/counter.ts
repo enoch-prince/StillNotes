@@ -119,6 +119,7 @@ export const useNoteDraftStore = defineStore('noteDraft', {
         color: '',
         font: 'default',
         scripture: [],
+        tags:[]
       },
       { mergeDefaults: true },
     ),
@@ -129,6 +130,7 @@ export const useNoteDraftStore = defineStore('noteDraft', {
       this.color = draft.color
       this.font = draft.font
       this.scripture = draft.scripture
+      this.tags = draft.tags
     },
     updateDraft(draft: Partial<INote>) {
       Object.assign(this, draft)
@@ -138,6 +140,8 @@ export const useNoteDraftStore = defineStore('noteDraft', {
       this.content = ''
       this.color = '#d1c7ff'
       this.font = 'default'
+      this.scripture = []
+      this.tags = []
     },
   },
 })
@@ -227,4 +231,12 @@ export const useNoteReminderStore = defineStore('noteReminder', () => {
   }
 
   return { dateToday, hour, minute, period, togglePeriod, resetNoteReminder }
+})
+
+export const useGlobalStatesStore = defineStore('globalStates', () => {
+  const addVerseClicked = ref(false)
+  const tagNoteClicked = ref(false)
+
+  return { addVerseClicked, tagNoteClicked }
+
 })

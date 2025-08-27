@@ -19,6 +19,7 @@ export interface INote {
   color: string
   font: string
   scripture: Scripture[]
+  tags?: sting[]
 }
 
 
