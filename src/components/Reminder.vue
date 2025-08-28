@@ -4,7 +4,7 @@ import { useSetReminderStore } from '@/stores/counter'
 import Button from '@/components/Button.vue'
 import InfiniteTimePicker from '@/components/InfiniteTimePicker.vue'
 import ToggleSlider from '@/components/ToggleSlider.vue'
-import { Hours, Minutes } from '@/utils'
+import { Hours, Minutes } from '@/utils/utils'
 
 defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'save'])

@@ -2,14 +2,19 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useGlobalStatesStore, useNoteDraftStore, useNoteReminderStore, useSavedNotesStore } from '@/stores/counter'
+import {
+  useGlobalStatesStore,
+  useNoteDraftStore,
+  useNoteReminderStore,
+  useSavedNotesStore,
+} from '@/stores/counter'
 import Button from '@/components/Button.vue'
-import type { Scripture } from '@/custom_types'
+import type { Scripture } from '@/utils/custom_types'
 import AppBar from '@/components/AppBar.vue'
 import SlideupSelector from '@/components/SlideupSelector.vue'
 import ToggleSlider from '@/components/ToggleSlider.vue'
 import InfiniteTimePicker from '@/components/InfiniteTimePicker.vue'
-import { formatDate, Hours, Minutes } from '@/utils'
+import { formatDate, Hours, Minutes } from '@/utils/utils'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
@@ -25,7 +30,7 @@ const selectedColor = ref(noteDraftStore.color || colors[2])
 const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 const today = formatDate(dateToday.value)
-const tags = ref<string[]>([])
+const tags = ref<string[]>(noteDraftStore.tags!)
 
 const modalActive = ref(false)
 const showReminderModal = ref(false)
@@ -84,7 +89,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
     color: selectedColor.value,
     font: fontStyle.value,
     scripture: noteScripture.value,
-    tags: tags.value
+    tags: tags.value,
   })
 })
 </script>
@@ -103,15 +108,23 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
         class="input p-0 is-size-3 is-transparent has-text-white has-text-weight-semibold"
         v-model="noteTitle"
         placeholder="Title"
-        style="border: none; background: transparent; box-shadow: none;"
+        style="border: none; background: transparent; box-shadow: none"
       />
 
       <textarea
         id="note"
+        rows="5"
         class="textarea p-0 is-transparent is-family-secondary mt-4"
         v-model="noteContent"
         placeholder="I'm reflecting on..."
-        style="border: none; background: transparent; resize: none; color: white; box-shadow: none;"
+        style="
+          display: flex;
+          border: none;
+          background: transparent;
+          resize: none;
+          color: white;
+          box-shadow: none;
+        "
       />
       <div class="tags">
         <span
@@ -176,7 +189,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
       :modal-background-transparent="true"
     >
       <template #extra>
-        <div class="px-4" style="position: absolute; bottom: 37%; width: 100%; left: 0;">
+        <div class="px-4" style="position: absolute; bottom: 37%; width: 100%; left: 0">
           <div style="border-top: 2px solid #fff"></div>
           <div class="pt-4 is-family-secondary">
             <div class="tags">
@@ -186,7 +199,9 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
                 style="background-color: rgba(255, 255, 255, 0.8); gap: 6px"
               >
                 {{ tag }}
-                <span class="has-text-grey is-clickable" @click="removeTag(tag)"> <font-awesome-icon icon="fas fa-x" /> </span>
+                <span class="has-text-grey is-clickable" @click="removeTag(tag)">
+                  <font-awesome-icon icon="fas fa-x" />
+                </span>
               </div>
             </div>
             <p class="mt-4 has-text-light">

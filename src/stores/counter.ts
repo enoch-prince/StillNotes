@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
-import type { BibleBook, INote, IRecent, Scripture } from '@/custom_types'
+import type { BibleBook, INote, IRecent, Scripture } from '@/utils/custom_types'
 import { useLocalStorage } from '@vueuse/core'
 
 export const useCounterStore = defineStore('counter', () => {
@@ -119,7 +119,7 @@ export const useNoteDraftStore = defineStore('noteDraft', {
         color: '',
         font: 'default',
         scripture: [],
-        tags:[]
+        tags: [],
       },
       { mergeDefaults: true },
     ),
@@ -213,7 +213,6 @@ export const useSearchedScriptureStore = defineStore('searchedScripture', () => 
   return { bibleBook, set }
 })
 
-
 export const useNoteReminderStore = defineStore('noteReminder', () => {
   const dateToday = ref<Date>(new Date())
   const hour = ref<number>(4)
@@ -221,12 +220,12 @@ export const useNoteReminderStore = defineStore('noteReminder', () => {
   const period = ref<string>('PM')
 
   const togglePeriod = () => {
-    period.value = period.value === 'AM' ? 'PM':'AM'
+    period.value = period.value === 'AM' ? 'PM' : 'AM'
   }
 
   const resetNoteReminder = () => {
-    hour.value = 0;
-    minute.value = 0;
+    hour.value = 0
+    minute.value = 0
     period.value = 'PM'
   }
 
@@ -238,5 +237,42 @@ export const useGlobalStatesStore = defineStore('globalStates', () => {
   const tagNoteClicked = ref(false)
 
   return { addVerseClicked, tagNoteClicked }
+})
 
+export const useRecentTagsStore = defineStore('recentTags', () => {
+  const numOfItemsToReturn = 15
+  const numOfDays = 15
+  const recentTags = ref<IRecent[]>([])
+
+  const addToRecent = (recent: IRecent) => {
+    const indexToRemove = recentTags.value.findIndex((tag) => tag.id === recent.id)
+
+    if (indexToRemove === -1) {
+      recentTags.value.unshift(recent)
+    } else {
+      console.log(`${recent.label} already added to recent`)
+    }
+    // recentScripture.value.unshift(recent)
+  }
+
+  const dateThreshold = computed(() => {
+    const threshold = new Date()
+    const today = new Date()
+
+    return threshold.setDate(today.getDate() - numOfDays)
+  })
+
+  const removeOldItems = () => {
+    recentTags.value = recentTags.value.filter((item) => item.timestamp < dateThreshold)
+  }
+
+  const getNMostRecent = computed(() => {
+    if (recentTags.value.length > numOfItemsToReturn) {
+      return recentTags.value.slice(numOfItemsToReturn)
+    } else {
+      return recentTags.value
+    }
+  })
+
+  return { recentTags, getNMostRecent, addToRecent, removeOldItems }
 })

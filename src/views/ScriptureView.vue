@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import AppBar from '@/components/AppBar.vue'
-import type { Scripture } from '@/custom_types'
+import type { Scripture } from '@/utils/custom_types'
 import { useNoteDraftStore, useSearchedScriptureStore } from '@/stores/counter'
 import { useRouter } from 'vue-router'
-import { generateId } from '@/utils'
+import { generateId } from '@/utils/utils'
 
 const showChapterModal = ref(true)
 const appTitle = computed(() => (showChapterModal.value ? 'Chapter' : 'Verse'))

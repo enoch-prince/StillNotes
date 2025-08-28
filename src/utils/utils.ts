@@ -80,3 +80,8 @@ export function formatDate(date: Date) {
 
 export const Hours = Array.from({ length: 12 }, (_, i) => i + 1)
 export const Minutes = Array.from({ length: 60 }, (_, i) => i)
+
+export const Tags = ["Walk", "Purpose", "Faith", "Consecration", "Hope", "Love"]
+export function searchTag(tagData:string[], tagName: string) {
+  const found = tagData.find((t) => t.toLocaleLowerCase() === tagName.toLocaleLowerCase())
+}

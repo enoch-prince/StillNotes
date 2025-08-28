@@ -3,8 +3,8 @@ import { useRecentScriptureStore, useSearchedScriptureStore } from '@/stores/cou
 import ScriptureBar from './ScriptureBar.vue'
 import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { Bible, generateId, searchBible } from '@/utils'
-import type { IRecent } from '@/custom_types'
+import { Bible, generateId, searchBible } from '@/utils/utils'
+import type { IRecent } from '@/utils/custom_types'
 
 const props = defineProps<{ scriptureSearch: string }>()
 
@@ -19,19 +19,19 @@ const searched = computed(() => {
 
 watch(searched, (newSearched) => {
   if (!newSearched.error) {
-    console.log("newSearched => ",newSearched)
+    console.log('newSearched => ', newSearched)
     recentScriptureStore.addToRecent({
       id: generateId(newSearched.book),
       label: newSearched.book,
       timestamp: new Date(),
-      data: newSearched
+      data: newSearched,
     })
   }
 })
 
 const goToScriptureView = (scrip: IRecent) => {
   console.log(scrip)
-  searchedScriptureStore.set(scrip.data)
+  searchedScriptureStore.set(scrip.data!)
   router.push({ name: 'scripture' })
 }
 </script>

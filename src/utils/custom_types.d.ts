@@ -19,7 +19,7 @@ export interface INote {
   color: string
   font: string
   scripture: Scripture[]
-  tags?: sting[]
+  tags: sting[]
 }
 
 
@@ -27,5 +27,5 @@ export interface IRecent {
   id: string
   label: string
   timestamp: DateTime
-  data: BibleBook
+  data?: BibleBook
 }
