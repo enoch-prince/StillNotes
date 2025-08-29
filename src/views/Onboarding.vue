@@ -21,7 +21,7 @@ watchEffect(()=> {
 </script>
 
 <template>
-  <div class="flex-center max-height custom-background" v-touch:swipe.right="onboard.prevStep">
+  <div class="flex-center max-height custom-background" style="position: relative;" v-touch:swipe.right="onboard.prevStep">
     <div class="" v-if="onboard.step == 0">
       <p
         @click="onboard.nextStep"
@@ -34,7 +34,7 @@ watchEffect(()=> {
       <div class="is-align-content-center">
         <Onboard1SVG />
       </div>
-      <p class="is-size-3-touch has-text-centered has-text-primary-100 mt-5">
+      <p class="is-size-2-tablet is-size-4-mobile has-text-centered has-text-primary-100 mt-5">
         Find peace in the small, scattered, uncertain moments.
       </p>
     </div>
@@ -43,7 +43,7 @@ watchEffect(()=> {
       <div class="is-align-content-center">
         <Onboard2SVG />
       </div>
-      <p class="is-size-3-touch has-text-centered has-text-primary-100 mt-5">
+      <p class="is-size-2-tablet is-size-4-mobile has-text-centered has-text-primary-100 mt-5">
         Every quiet moment matters
       </p>
     </div>
@@ -52,12 +52,12 @@ watchEffect(()=> {
       <div class="is-align-content-center">
         <Onboard3SVG />
       </div>
-      <p class="is-size-3-touch has-text-centered has-text-primary-100 mt-5">
+      <p class="is-size-2-tablet is-size-4-mobile has-text-centered has-text-primary-100 mt-5">
         Reflect, remember, and stay rooted
       </p>
     </div>
 
-    <div v-show="onboard.step > 0">
+    <div v-show="onboard.step > 0" style="position: fixed; bottom: 5%;">
       <PaginationBullets :total-pages="3" />
       <div
         class="is-flex width-80vw mt-5p5"
@@ -110,7 +110,14 @@ watchEffect(()=> {
 }
 
 p {
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: 6%;
+  margin-right: 6%;
+  margin-bottom: 15%;
 }
+
+/* @media screen and (max-width: 375px) {
+    .is-size-4-mobile {
+        font-size: 1.5rem !important;
+    }
+} */
 </style>
