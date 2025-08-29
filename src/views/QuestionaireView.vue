@@ -68,7 +68,7 @@ const ListOfQs = [
         </div>
       </div>
       <div
-        class="is-flex is-align-items-flex-start is-justify-content-space-between width-90vw mt-5"
+        class="is-flex is-align-items-flex-start is-justify-content-space-between width-90vw "
       >
         <Button color="transparent" label-color="primary" @click="handleSkip">Skip</Button>
         <Button
@@ -95,5 +95,14 @@ const ListOfQs = [
 }
 .width-90vw {
   width: 90vw;
+}
+
+@media screen and (max-width: 375px) {
+    .is-size-4 {
+        font-size: 1.25rem !important;
+    }
+    .is-size-3 {
+        font-size: 1.5rem !important;
+    }
 }
 </style>
