@@ -20,6 +20,7 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const noteDraftStore = useNoteDraftStore()
 const globalStatesStore = useGlobalStatesStore()
+const savedNotesStore = useSavedNotesStore()
 const { dateToday, hour, minute, period } = storeToRefs(useNoteReminderStore())
 const { togglePeriod, resetNoteReminder } = useNoteReminderStore()
 
@@ -30,7 +31,7 @@ const selectedColor = ref(noteDraftStore.color || colors[2])
 const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 const today = formatDate(dateToday.value)
-const tags = ref<string[]>(noteDraftStore.tags!)
+const tags = ref<string[]>(noteDraftStore.tags)
 
 const tagNoteLabel = computed(() => {
   if (tags.value.length === 0) return "Not Set";
@@ -39,12 +40,15 @@ const tagNoteLabel = computed(() => {
 
 const modalActive = ref(globalStatesStore.showAddNoteSettings)
 const showReminderModal = ref(false)
-const makePublic = ref(false)
+const makePublic = ref(noteDraftStore.public)
 
 function goNext() {
   modalActive.value = true
-  // savedNotesStore.addToNotes(noteDraftStore.$state)
-  //   router.push('/note/preview')
+}
+
+function saveNote() {
+  savedNotesStore.addToNotes(noteDraftStore.$state)
+    router.push({name: 'home'})
 }
 
 function addVerse() {
@@ -87,7 +91,7 @@ const cancelNoteReminder = () => {
   resetNoteReminder()
 }
 
-watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], () => {
+watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags, makePublic], () => {
   noteDraftStore.updateDraft({
     title: noteTitle.value,
     content: noteContent.value,
@@ -95,6 +99,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
     font: fontStyle.value,
     scripture: noteScripture.value,
     tags: tags.value,
+    public: makePublic.value
   })
 })
 </script>
@@ -250,7 +255,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
             </div>
           </div>
           <div class="px-2 py-4 is-flex is-flex-direction-row-reverse">
-            <Button size="small"  color="primary" outlined rounded>Save</Button>
+            <Button size="small"  color="primary" outlined rounded @click="saveNote">Save</Button>
           </div>
         </div>
       </div>

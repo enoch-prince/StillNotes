@@ -31,7 +31,11 @@ function doSearch(item: string) {
 
 function selectTag(tagLabel: string) {
   if (!tagAlreadySelected.value(tagLabel)) selectedTags.value.push(tagLabel)
-  recentTagsStore.addToRecent({ id: generateId(tagLabel), label: tagLabel, timestamp: new Date() })
+  recentTagsStore.addToRecent({
+    id: generateId(tagLabel),
+    label: tagLabel,
+    timestamp: new Date().getDate(),
+  })
 }
 
 function removeTag(label: string) {
@@ -56,8 +60,12 @@ watch(searched, (newSearched) => {
 <template>
   <div class="px-4">
     <div v-if="!isReady">⏳ Building index...</div>
-    <div v-else>
-      <div style="margin-bottom: 1.25rem; margin-top: 1.25rem; width: 100%">
+    <div
+      class="pb-3"
+      v-if="isReady && tagSearch.length !== 0"
+      style="border-bottom: 2px solid rgb(200 197 203 / 17%)"
+    >
+      <div style="margin-bottom: 0.5rem; margin-top: 1.25rem; width: 100%">
         <p class="is-family-secondary is-size-7" style="color: #c8c5cb">FOUND TAGS</p>
       </div>
       <div class="tags" style="gap: 12px">
@@ -72,7 +80,7 @@ watch(searched, (newSearched) => {
     </div>
 
     <div v-show="selectedTags.length !== 0">
-      <div style="margin-bottom: 1.25rem; margin-top: 1.25rem; width: 100%">
+      <div style="margin-bottom: 0.5rem; margin-top: 1.25rem; width: 100%">
         <p class="is-family-secondary is-size-7" style="color: #c8c5cb">SELECTED TAGS</p>
       </div>
       <div class="tags" style="gap: 12px">
@@ -85,16 +93,18 @@ watch(searched, (newSearched) => {
       </div>
     </div>
 
-    <div style="margin-bottom: 1.25rem; margin-top: 1.25rem; width: 100%">
-      <p class="is-family-secondary is-size-7" style="color: #c8c5cb">RECENT TAGS</p>
-    </div>
-    <div class="tags" style="gap: 12px">
-      <div
-        class="tag is-rounded custom-styled is-clickable"
-        v-for="tag in recentTags"
-        @click="selectTag(tag.label)"
-      >
-        {{ tag.label }}
+    <div v-show="tagSearch.length === 0">
+      <div style="margin-bottom: 0.5rem; margin-top: 1.25rem; width: 100%">
+        <p class="is-family-secondary is-size-7" style="color: #c8c5cb">RECENT TAGS</p>
+      </div>
+      <div class="tags" style="gap: 12px">
+        <div
+          class="tag is-rounded custom-styled is-clickable"
+          v-for="tag in recentTags"
+          @click="selectTag(tag.label)"
+        >
+          {{ tag.label }}
+        </div>
       </div>
     </div>
   </div>

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { BibleBook, INote, IRecent, Scripture } from '@/utils/custom_types'
 import { useLocalStorage } from '@vueuse/core'
+import { generateId } from '@/utils/utils'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
@@ -120,6 +121,7 @@ export const useNoteDraftStore = defineStore('noteDraft', {
         font: 'default',
         scripture: [],
         tags: [],
+        public: false,
       },
       { mergeDefaults: true },
     ),
@@ -150,7 +152,14 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
   const notes = useLocalStorage<INote[]>('notes', [], { mergeDefaults: true })
 
   const addToNotes = (note: INote) => {
-    notes.value.push(note)
+    note.id = generateId(
+      `${note.title} ${note.scripture[0].book}`,
+      note.scripture[0].chapter,
+      note.scripture[0].verse,
+    )
+    const found = notes.value.find((not) => not.id === note.id)
+    if (!found)
+      notes.value.push(note)
   }
 
   const removeFromNotes = (noteId: string) => {
@@ -188,7 +197,9 @@ export const useRecentScriptureStore = defineStore('recentScripture', () => {
   })
 
   const removeOldItems = () => {
-    recentScripture.value = recentScripture.value.filter((item) => item.timestamp < dateThreshold)
+    recentScripture.value = recentScripture.value.filter(
+      (item) => item.timestamp < dateThreshold.value,
+    )
   }
 
   const getNMostRecent = computed(() => {
@@ -264,7 +275,7 @@ export const useRecentTagsStore = defineStore('recentTags', () => {
   })
 
   const removeOldItems = () => {
-    recentTags.value = recentTags.value.filter((item) => item.timestamp < dateThreshold)
+    recentTags.value = recentTags.value.filter((item) => item.timestamp < dateThreshold.value)
   }
 
   const getNMostRecent = computed(() => {

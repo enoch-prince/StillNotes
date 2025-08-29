@@ -23,7 +23,7 @@ watch(searched, (newSearched) => {
     recentScriptureStore.addToRecent({
       id: generateId(newSearched.book),
       label: newSearched.book,
-      timestamp: new Date(),
+      timestamp: new Date().getDate(),
       data: newSearched,
     })
   }

@@ -12,6 +12,11 @@ export interface BibleBook {
   } | null
 }
 
+export interface INoteSettings {
+  public: boolean
+  reminder: Date
+}
+
 export interface INote {
   id?: string
   title: string
@@ -20,13 +25,14 @@ export interface INote {
   font: string
   scripture: Scripture[]
   tags: sting[]
+  public: boolean
 }
 
 
 export interface IRecent {
   id: string
   label: string
-  timestamp: DateTime
+  timestamp: number
   data?: BibleBook
 }
 

@@ -6,15 +6,15 @@ import HomeReminderSVG from '@/components/svgs/homeReminderSVG.vue'
 import ReminderModal from '@/components/Reminder.vue'
 import SlideUpPromptModal from '@/components/SlideUpPromptModal.vue'
 import { useNavigationStore, useReminderStore } from '@/stores/counter'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
 const user = 'Kwame'
 
-const reminder = useReminderStore()
+const reminderStore = useReminderStore()
 const navStore = useNavigationStore()
 const previousRoute = computed(() => navStore.previousRoute)
-const modalActive = ref(false)
+const modalActive = ref(!reminderStore.reminderEnabled)
 const showSetReminder = ref(false)
 const router = useRouter()
 
@@ -33,7 +33,7 @@ const handleFab = () => {
 }
 
 const handleModalYes = () => {
-  reminder.remindMe = true
+  reminderStore.remindMe = true
   showSetReminder.value = true
 }
 
@@ -43,11 +43,15 @@ const handleSaveReminder = () => {
   modalActive.value = false
 }
 
+watch(modalActive, (newValue) => {
+  reminderStore.remindMe = newValue
+})
+
 watchEffect(() => {
   if (previousRoute.value?.name === 'questionaire') {
     modalActive.value = true
   } else {
-    if (!reminder.reminderEnabled) {
+    if (!reminderStore.reminderEnabled) {
       modalActive.value = true
     }
   }
@@ -77,36 +81,7 @@ watchEffect(() => {
         <Button color="primary" label-color="white" fullWidth @click="handleFab">Write my first note</Button>
       </div>
     </div>
-
-    <!-- Modal -->
-    <!-- <div class="modal" :class="modalClasses">
-      <div class="modal-background" @click="modalActive = false"></div>
-      <div
-        class="modal-content is-flex is-flex-direction-column is-justify-content-center is-align-items-center p-5 has-width-85"
-        style="border-radius: 1rem; background-color: #fff"
-      >
-        <div class="mb-5">
-          <HomeReminderSVG />
-        </div>
-        <div class="mb-5">
-          <p class="is-size-4 has-text-centered">
-            Would you like gentle reminders to write or reflect?
-          </p>
-        </div>
-        <div class="is-flex is-justify-content-space-between" style="width: 100%">
-          <Button py="2" style="width: 38.1%" @click="modalActive = false">No</Button>
-          <Button
-            color="primary"
-            label-color="light"
-            py="2"
-            style="width: 38.1%"
-            @click="handleModalYes"
-            >Yes</Button
-          >
-        </div>
-      </div>
-      <button class="modal-close is-large" aria-label="close" @click="modalActive = false"></button>
-    </div> -->
+    
     <SlideUpPromptModal v-model="modalActive" @no="modalActive = false">
       <template #icon>
         <HomeReminderSVG />
