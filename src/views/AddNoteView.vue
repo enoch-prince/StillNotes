@@ -1,6 +1,6 @@
 <!-- views/AddNote.vue -->
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   useGlobalStatesStore,
@@ -32,7 +32,12 @@ const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 const today = formatDate(dateToday.value)
 const tags = ref<string[]>(noteDraftStore.tags!)
 
-const modalActive = ref(false)
+const tagNoteLabel = computed(() => {
+  if (tags.value.length === 0) return "Not Set";
+  return `${tags.value.length} Set`
+})
+
+const modalActive = ref(globalStatesStore.showAddNoteSettings)
 const showReminderModal = ref(false)
 const makePublic = ref(false)
 
@@ -199,7 +204,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
                 style="background-color: rgba(255, 255, 255, 0.8); gap: 6px"
               >
                 {{ tag }}
-                <span class="has-text-grey is-clickable" @click="removeTag(tag)">
+                <span class="icon has-text-grey is-clickable" @click="removeTag(tag)">
                   <font-awesome-icon icon="fas fa-x" />
                 </span>
               </div>
@@ -227,7 +232,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
                 <span class="ml-2">Set Reminder</span>
               </div>
               <div class="has-text-grey is-size-7 is-clickable" @click="showReminderModal = true">
-                <span>Not Set</span>
+                <span>Change</span>
                 <span class="ml-2"><font-awesome-icon icon="fa-solid fa-chevron-right" /></span>
               </div>
             </div>
@@ -239,10 +244,13 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags], (
                 <span class="ml-2">Tag Note</span>
               </div>
               <div class="has-text-grey is-size-7 is-clickable" @click="addTag">
-                <span>Not Set</span>
+                <span>{{ tagNoteLabel }}</span>
                 <span class="ml-2"><font-awesome-icon icon="fa-solid fa-chevron-right" /></span>
               </div>
             </div>
+          </div>
+          <div class="px-2 py-4 is-flex is-flex-direction-row-reverse">
+            <Button size="small"  color="primary" outlined rounded>Save</Button>
           </div>
         </div>
       </div>

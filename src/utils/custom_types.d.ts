@@ -29,3 +29,8 @@ export interface IRecent {
   timestamp: DateTime
   data?: BibleBook
 }
+
+export interface ITag {
+  id?: string
+  label: string
+}

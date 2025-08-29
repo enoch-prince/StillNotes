@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useTagWorker } from '@/composables/useTagWorker';
-import { useNoteDraftStore, useRecentTagsStore } from '@/stores/counter';
-import { computed, ref, watch } from 'vue';
+import { useTagWorker } from '@/composables/useTagWorker'
+import { useNoteDraftStore, useRecentTagsStore } from '@/stores/counter'
+import { generateId } from '@/utils/utils'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{ tagSearch: string }>()
 
@@ -12,39 +13,88 @@ const recentTagsStore = useRecentTagsStore()
 const recentTags = computed(() => recentTagsStore.recentTags)
 const noteDraftStore = useNoteDraftStore()
 const selectedTags = ref<string[]>(noteDraftStore.tags)
+const tagAlreadySelected = computed(() => {
+  return (tagLabel: string) => {
+    const foundIndex = selectedTags.value.find(
+      (t) => t.toLocaleLowerCase() === tagLabel.toLocaleLowerCase(),
+    )
+    if (foundIndex) return true
+    return false
+  }
+})
 
-const { isReady, results, searchSubstring } = useTagWorker();
+const { isReady, results, searchSubstring } = useTagWorker()
 
 function doSearch(item: string) {
-    searchSubstring(item, 20);
+  searchSubstring(item, 20)
+}
+
+function selectTag(tagLabel: string) {
+  if (!tagAlreadySelected.value(tagLabel)) selectedTags.value.push(tagLabel)
+  recentTagsStore.addToRecent({ id: generateId(tagLabel), label: tagLabel, timestamp: new Date() })
+}
+
+function removeTag(label: string) {
+  const indexToRemove = selectedTags.value.findIndex((tag) => tag === label)
+  if (indexToRemove !== -1) {
+    selectedTags.value.splice(indexToRemove, 1)
+    console.log('Tag Removed')
+  }
 }
 
 watch(selectedTags, (newSelected) => {
-    noteDraftStore.updateDraft({
-        tags: newSelected
-    })
+  noteDraftStore.updateDraft({
+    tags: newSelected,
+  })
 })
 
 watch(searched, (newSearched) => {
-    doSearch(newSearched)
+  doSearch(newSearched)
 })
-
 </script>
 
 <template>
   <div class="px-4">
     <div v-if="!isReady">⏳ Building index...</div>
-    <div v-else>Results: {{ results }}</div>
-    <div style="margin-bottom: 1.25rem; width: 100%">
+    <div v-else>
+      <div style="margin-bottom: 1.25rem; margin-top: 1.25rem; width: 100%">
+        <p class="is-family-secondary is-size-7" style="color: #c8c5cb">FOUND TAGS</p>
+      </div>
+      <div class="tags" style="gap: 12px">
+        <div
+          class="tag is-rounded custom-styled is-clickable"
+          v-for="tagLabel in results"
+          @click="selectTag(tagLabel)"
+        >
+          {{ tagLabel }}
+        </div>
+      </div>
+    </div>
+
+    <div v-show="selectedTags.length !== 0">
+      <div style="margin-bottom: 1.25rem; margin-top: 1.25rem; width: 100%">
+        <p class="is-family-secondary is-size-7" style="color: #c8c5cb">SELECTED TAGS</p>
+      </div>
+      <div class="tags" style="gap: 12px">
+        <div class="tag is-rounded custom-styled" style="gap: 2px" v-for="tag in selectedTags">
+          <span>{{ tag }}</span>
+          <span class="is-clickable p-1" @click="removeTag(tag)"
+            ><font-awesome-icon icon="fas fa-xmark"
+          /></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.25rem; margin-top: 1.25rem; width: 100%">
       <p class="is-family-secondary is-size-7" style="color: #c8c5cb">RECENT TAGS</p>
     </div>
     <div class="tags" style="gap: 12px">
       <div
         class="tag is-rounded custom-styled is-clickable"
         v-for="tag in recentTags"
-        @click="selectedTags.push(tag.label)"
+        @click="selectTag(tag.label)"
       >
-        {{ tag }}
+        {{ tag.label }}
       </div>
     </div>
   </div>

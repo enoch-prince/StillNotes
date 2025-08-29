@@ -34,6 +34,7 @@ const router = useRouter()
 const goBack = () => {
   globalStatesStore.tagNoteClicked = false
   globalStatesStore.addVerseClicked = false
+  if (point_to.value === 'tags') globalStatesStore.showAddNoteSettings = true
   router.back()
 }
 

@@ -235,8 +235,9 @@ export const useNoteReminderStore = defineStore('noteReminder', () => {
 export const useGlobalStatesStore = defineStore('globalStates', () => {
   const addVerseClicked = ref(false)
   const tagNoteClicked = ref(false)
+  const showAddNoteSettings = ref(false)
 
-  return { addVerseClicked, tagNoteClicked }
+  return { addVerseClicked, tagNoteClicked, showAddNoteSettings }
 })
 
 export const useRecentTagsStore = defineStore('recentTags', () => {

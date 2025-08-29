@@ -1,4 +1,5 @@
 // src/composables/useTagWorker.ts
+import { Tags } from "@/utils/utils";
 import { ref, onMounted, onUnmounted } from "vue";
 
 export function useTagWorker() {
@@ -36,7 +37,7 @@ export function useTagWorker() {
     // Build initial index
     worker.postMessage({
       type: "build",
-      payload: { tags: ["Walk", "Faith", "Purpose"] },
+      payload: { tags: Tags },
     });
   });
 
