@@ -41,9 +41,33 @@ const router = createRouter({
       name: 'onboard',
       component: () => import('../views/Onboarding.vue'),
     },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/ForgotPasswordView.vue'),
+    },
+    {
+      path: '/otp',
+      name: 'otp',
+      component: () => import('../views/OTPView.vue'),
+    },
+    {
+      path: '/new-password',
+      name: 'new-password',
+      component: () => import('../views/NewPasswordView.vue'),
+    },
   ],
 })
-
 
 router.beforeEach((to, from, next) => {
   const navStore = useNavigationStore()
