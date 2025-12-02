@@ -14,7 +14,7 @@ const user = 'Kwame'
 const reminderStore = useReminderStore()
 const navStore = useNavigationStore()
 const previousRoute = computed(() => navStore.previousRoute)
-const modalActive = ref(!reminderStore.reminderEnabled)
+const modalActive = computed(() => !reminderStore.reminderToWriteNoteEnabled && reminderStore.remindMe)
 const showSetReminder = ref(false)
 const router = useRouter()
 
@@ -33,8 +33,12 @@ const handleFab = () => {
 }
 
 const handleModalYes = () => {
-  reminderStore.remindMe = true
+  reminderStore.reminderToWriteNoteEnabled = true
   showSetReminder.value = true
+}
+
+const handleModalNo = () => {
+  reminderStore.remindMe = false
 }
 
 const handleSaveReminder = () => {
@@ -94,7 +98,7 @@ watchEffect(() => {
       </template>
 
       <template #buttons>
-        <Button py="2" style="width: 38.1%" @click="modalActive = false">No</Button>
+        <Button py="2" style="width: 38.1%" @click="handleModalNo">No</Button>
         <Button
           color="primary"
           label-color="light"

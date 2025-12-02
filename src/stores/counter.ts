@@ -43,15 +43,15 @@ export const useDateStore = defineStore('dateStore', {
 })
 
 export const useReminderStore = defineStore('reminder', () => {
-  const remindMe = ref(false)
+  const remindMe = ref(true)
 
-  const reminderEnabled = computed(() => remindMe.value)
+  const reminderToWriteNoteEnabled = ref(false)
 
   const unsetReminder = () => {
-    remindMe.value = false
+    reminderToWriteNoteEnabled.value = false
   }
 
-  return { remindMe, reminderEnabled, unsetReminder }
+  return { remindMe, reminderToWriteNoteEnabled, unsetReminder }
 })
 
 export const useQuestionaireStore = defineStore('questionaire', () => {
