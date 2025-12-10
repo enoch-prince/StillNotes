@@ -77,7 +77,7 @@ watchEffect(() => {
           'is-flex is-justify-content-space-between is-align-items-center': notesAvailable
         }">
         <span class="is-size-4 has-text-weight-semibold">👋🏽 Hello {{ user }}!</span>
-        <BellIconSVG v-on="!notesAvailable"/>
+        <BellIconSVG v-if="notesAvailable"/>
       </div>
       <div class="is-size-6 is-family-secondary has-text-grey">
         <span v-if="!notesAvailable">Just breathe and write ✍️</span>
