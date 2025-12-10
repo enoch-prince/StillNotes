@@ -146,6 +146,7 @@ watchEffect(() => {
 .content {
   background-color: #f9f8ff;
   height: 100vh;
+  overflow-y: hidden;
 }
 .has-width-85 {
   width: 85%;
