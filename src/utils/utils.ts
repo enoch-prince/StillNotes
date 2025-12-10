@@ -50,7 +50,11 @@ export function searchBible(jsonData: { newTestament: any[] }, bookName: string)
   return book
 }
 
-export function generateId(bookName: string, chapterNum:number|null = null, verseNum:number|null = null) {
+export function generateId(
+  bookName: string,
+  chapterNum: number | null = null,
+  verseNum: number | null = null,
+) {
   // Convert book name to a standardized ID (e.g., "1 John" → "1jn")
   const bookId = bookName
     .toLowerCase()
@@ -66,22 +70,32 @@ export function generateId(bookName: string, chapterNum:number|null = null, vers
   }
 }
 
-
-
 export function formatDate(date: Date) {
   return date.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
-    year: 'numeric'
-  });
+    year: 'numeric',
+  })
 }
-
 
 export const Hours = Array.from({ length: 12 }, (_, i) => i + 1)
 export const Minutes = Array.from({ length: 60 }, (_, i) => i)
 
-export const Tags = ["Walk", "Purpose", "Faith", "Consecration", "Hope", "Love"]
-export function searchTag(tagData:string[], tagName: string) {
+export const Tags = ['Walk', 'Purpose', 'Faith', 'Consecration', 'Hope', 'Love']
+export function searchTag(tagData: string[], tagName: string) {
   const found = tagData.find((t) => t.toLocaleLowerCase() === tagName.toLocaleLowerCase())
+}
+
+export function getContrastColor(hexColor: string) {
+  // Convert hex to RGB
+  const r = parseInt(hexColor.substring(1, 3), 16)
+  const g = parseInt(hexColor.substring(3, 5), 16)
+  const b = parseInt(hexColor.substring(5, 7), 16)
+
+  // Calculate YIQ ratio
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000
+
+  // Return black or white based on contrast
+  return yiq >= 128 ? '#292d36ff' : '#FFFFFF'
 }
