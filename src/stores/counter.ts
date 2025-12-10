@@ -43,7 +43,7 @@ export const useDateStore = defineStore('dateStore', {
 })
 
 export const useReminderStore = defineStore('reminder', () => {
-  const remindMe = ref(true)
+  const remindMe = ref(true) // remind me to set a reminderToWriteNote
 
   const reminderToWriteNoteEnabled = ref(false)
 
@@ -122,6 +122,7 @@ export const useNoteDraftStore = defineStore('noteDraft', {
         scripture: [],
         tags: [],
         public: false,
+        timestamp: Date.now(),
       },
       { mergeDefaults: true },
     ),
@@ -133,8 +134,10 @@ export const useNoteDraftStore = defineStore('noteDraft', {
       this.font = draft.font
       this.scripture = draft.scripture
       this.tags = draft.tags
+      this.timestamp = draft.timestamp
     },
     updateDraft(draft: Partial<INote>) {
+      draft.timestamp = Date.now()
       Object.assign(this, draft)
     },
     resetDraft() {
@@ -144,12 +147,15 @@ export const useNoteDraftStore = defineStore('noteDraft', {
       this.font = 'default'
       this.scripture = []
       this.tags = []
+      this.timestamp = Date.now()
     },
   },
 })
 
 export const useSavedNotesStore = defineStore('savedNotes', () => {
   const notes = useLocalStorage<INote[]>('notes', [], { mergeDefaults: true })
+
+  const isEmpty = computed(() => notes.value.length === 0)
 
   const addToNotes = (note: INote) => {
     note.id = generateId(
@@ -158,8 +164,7 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
       note.scripture[0].verse,
     )
     const found = notes.value.find((not) => not.id === note.id)
-    if (!found)
-      notes.value.push(note)
+    if (!found) notes.value.push(note)
   }
 
   const removeFromNotes = (noteId: string) => {
@@ -170,7 +175,7 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
     }
   }
 
-  return { notes, addToNotes, removeFromNotes }
+  return { notes, isEmpty, addToNotes, removeFromNotes }
 })
 
 export const useRecentScriptureStore = defineStore('recentScripture', () => {

@@ -5,16 +5,21 @@ import BottomNavBar from '@/components/BottomNavBar.vue'
 import HomeReminderSVG from '@/components/svgs/homeReminderSVG.vue'
 import ReminderModal from '@/components/Reminder.vue'
 import SlideUpPromptModal from '@/components/SlideUpPromptModal.vue'
-import { useNavigationStore, useReminderStore } from '@/stores/counter'
+import RecentNotes from '@/components/RecentNotes.vue'
+import BellIconSVG from '@/components/svgs/bellIconSVG.vue'
+import { useNavigationStore, useReminderStore, useSavedNotesStore, useNoteDraftStore } from '@/stores/counter'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
 const user = 'Kwame'
 
+const noteDraftStore = useNoteDraftStore()
 const reminderStore = useReminderStore()
 const navStore = useNavigationStore()
+const notesAvailable = computed(() => !useSavedNotesStore().isEmpty)
 const previousRoute = computed(() => navStore.previousRoute)
-const modalActive = computed(() => !reminderStore.reminderToWriteNoteEnabled && reminderStore.remindMe)
+const slideModalActive = ref(true)
+const modalActive = computed(() => !reminderStore.reminderToWriteNoteEnabled && reminderStore.remindMe && slideModalActive.value)
 const showSetReminder = ref(false)
 const router = useRouter()
 
@@ -29,6 +34,7 @@ const handleNav = (id: string) => {
 // floating action buttons
 const handleFab = () => {
   console.log('FAB pressed: Open new note')
+  noteDraftStore.resetDraft()
   router.push('/note')
 }
 
@@ -44,7 +50,7 @@ const handleModalNo = () => {
 const handleSaveReminder = () => {
   console.log('Reminder saved!')
   showSetReminder.value = false
-  modalActive.value = false
+  slideModalActive.value = false
 }
 
 watch(modalActive, (newValue) => {
@@ -53,10 +59,10 @@ watch(modalActive, (newValue) => {
 
 watchEffect(() => {
   if (previousRoute.value?.name === 'questionaire') {
-    modalActive.value = true
+    slideModalActive.value = true
   } else {
-    if (!reminderStore.reminderEnabled) {
-      modalActive.value = true
+    if (!reminderStore.reminderToWriteNoteEnabled) {
+      slideModalActive.value = true
     }
   }
 })
@@ -64,12 +70,22 @@ watchEffect(() => {
 
 <template>
   <div class="content">
-    <div class="section">
-      <p class="is-size-4 mb-4 has-text-weight-semibold">👋🏽 Hello {{ user }}!</p>
-      <p class="is-size-6 is-family-secondary has-text-grey">Just breathe and write ✍️</p>
+    <div class="px-4">
+      <div 
+        class="pt-4 pb-2 mb-2"
+        :class="{
+          'is-flex is-justify-content-space-between is-align-items-center': notesAvailable
+        }">
+        <span class="is-size-4 has-text-weight-semibold">👋🏽 Hello {{ user }}!</span>
+        <BellIconSVG v-on="!notesAvailable"/>
+      </div>
+      <div class="is-size-6 is-family-secondary has-text-grey">
+        <span v-if="!notesAvailable">Just breathe and write ✍️</span>
+        <span v-else>You haven’t written since Tuesday. No pressure 😊</span>
+      </div>
       <CalendarScroller class="mt-5" />
     </div>
-    <div class="section is-flex is-flex-direction-column is-align-items-center pt-2">
+    <div v-if="!notesAvailable" class="section is-flex is-flex-direction-column is-align-items-center pt-2">
       <div class="mb-4">
         <p class="has-text-centered is-size-3 has-text-weight-bold">
           Want to begin your first reflection?
@@ -85,8 +101,12 @@ watchEffect(() => {
         <Button color="primary" label-color="white" fullWidth @click="handleFab">Write my first note</Button>
       </div>
     </div>
+
+    <div v-else>
+      <RecentNotes />
+    </div>
     
-    <SlideUpPromptModal v-model="modalActive" @no="modalActive = false">
+    <SlideUpPromptModal v-model="modalActive" @no="slideModalActive = false">
       <template #icon>
         <HomeReminderSVG />
       </template>

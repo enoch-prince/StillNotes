@@ -26,6 +26,7 @@ export interface INote {
   scripture: Scripture[]
   tags: sting[]
   public: boolean
+  timestamp?: number
 }
 
 

@@ -48,7 +48,7 @@ function goNext() {
 
 function saveNote() {
   savedNotesStore.addToNotes(noteDraftStore.$state)
-    router.push({name: 'home'})
+  router.push({name: 'home'})
 }
 
 function addVerse() {
@@ -78,7 +78,7 @@ function removeTag(tagName: string) {
   const indexToRemove = tags.value.findIndex((tag) => tag === tagName)
   if (indexToRemove !== -1) {
     tags.value.splice(indexToRemove, 1)
-    console.log('Scripture Removed')
+    console.log('Tag Removed')
   }
 }
 
