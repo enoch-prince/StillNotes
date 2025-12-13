@@ -36,7 +36,7 @@ export const Bible = {
       },
     },
   ],
-}
+} // Separate into it's file and complete the whole Bible: TODO
 
 export function searchBible(jsonData: { newTestament: any[] }, bookName: string) {
   // 1. Find the book in New Testament
@@ -82,10 +82,7 @@ export function formatDate(date: Date) {
 export const Hours = Array.from({ length: 12 }, (_, i) => i + 1)
 export const Minutes = Array.from({ length: 60 }, (_, i) => i)
 
-export const Tags = ['Walk', 'Purpose', 'Faith', 'Consecration', 'Hope', 'Love']
-export function searchTag(tagData: string[], tagName: string) {
-  const found = tagData.find((t) => t.toLocaleLowerCase() === tagName.toLocaleLowerCase())
-}
+export const Tags = ['Walk', 'Purpose', 'Faith', 'Consecration', 'Hope', 'Love'] // fetch from DB: TODO
 
 export function getContrastColor(hexColor: string) {
   // Convert hex to RGB
@@ -97,5 +94,6 @@ export function getContrastColor(hexColor: string) {
   const yiq = (r * 299 + g * 587 + b * 114) / 1000
 
   // Return black or white based on contrast
-  return yiq >= 128 ? '#292d36ff' : '#FFFFFF'
+  // return yiq >= 128 ? '#292d36ff' : '#FFFFFF'
+  return yiq > 170 ? '#292d36ff' : '#FFFFFF'
 }

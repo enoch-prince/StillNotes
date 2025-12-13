@@ -157,6 +157,7 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
 
   const isEmpty = computed(() => notes.value.length === 0)
 
+  // FixBug: Runtime error when no scripture is selected for a note
   const addToNotes = (note: INote) => {
     note.id = generateId(
       `${note.title} ${note.scripture[0].book}`,

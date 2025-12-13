@@ -54,11 +54,13 @@ function saveNote() {
 function addVerse() {
   console.log('Add verse clicked')
   globalStatesStore.addVerseClicked = true
+  globalStatesStore.tagNoteClicked = false
   router.push({ name: 'search' })
 }
 
 function addTag() {
   globalStatesStore.tagNoteClicked = true
+  globalStatesStore.addVerseClicked = false
   router.push({ name: 'search' })
 }
 
