@@ -1,9 +1,10 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { BibleBook, INote, IRecent, Scripture } from '@/utils/custom_types'
 import { useLocalStorage } from '@vueuse/core'
 import { generateId } from '@/utils/utils'
+import { useDatabaseStore } from './db'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
@@ -110,89 +111,192 @@ export const useSetReminderStore = defineStore('set-reminder', () => {
   }
 })
 
-export const useNoteDraftStore = defineStore('noteDraft', {
-  state: () =>
-    useLocalStorage<INote>(
-      'note-draft',
-      {
-        title: '',
-        content: '',
-        color: '',
-        font: 'default',
-        scripture: [],
-        tags: [],
-        public: false,
-        timestamp: Date.now(),
-      },
-      { mergeDefaults: true },
-    ),
-  actions: {
-    saveDraft(draft: INote) {
-      this.title = draft.title
-      this.content = draft.content
-      this.color = draft.color
-      this.font = draft.font
-      this.scripture = draft.scripture
-      this.tags = draft.tags
-      this.timestamp = draft.timestamp
-    },
-    updateDraft(draft: Partial<INote>) {
-      draft.timestamp = Date.now()
-      Object.assign(this, draft)
-    },
-    resetDraft() {
-      this.title = ''
-      this.content = ''
-      this.color = '#d1c7ff'
-      this.font = 'default'
-      this.scripture = []
-      this.tags = []
-      this.timestamp = Date.now()
-    },
-  },
+export const useNoteDraftStore = defineStore('noteDraft', () => {
+  const dbStore = useDatabaseStore()
+
+  // Track the current active draft
+  const id = ref(`draft-${Date.now()}`)
+  const title = ref('')
+  const content = ref('')
+  const color = ref('#d1c7ff')
+  const font = ref('default')
+  const scripture = ref<Scripture[]>([])
+  const tags = ref<string[]>([])
+  const isPublic = ref(false) // Note: renamed 'public' avoids reserved keyword issues internally
+  const timestamp = ref(Date.now())
+
+  // Keep a catalog of all drafts
+  const allDrafts = ref<INote[]>([])
+
+  const loadDrafts = async () => {
+    if (!dbStore.isReady) return;
+    const dbDrafts = await dbStore.execute((db) => db.find('drafts'))
+    allDrafts.value = (dbDrafts as unknown as INote[]).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+  }
+
+  watch(() => dbStore.isReady, (ready) => {
+    if (ready && dbStore.db) {
+      loadDrafts();
+      dbStore.db.onChange((op) => {
+        if (op.collection === 'drafts') {
+          loadDrafts();
+        }
+      });
+    }
+  }, { immediate: true })
+
+  // Construct a single Draft payload
+  const currentDraftPayload = computed<INote>(() => ({
+    id: id.value,
+    title: title.value,
+    content: content.value,
+    color: color.value,
+    font: font.value,
+    scripture: scripture.value,
+    tags: tags.value,
+    public: isPublic.value,
+    timestamp: timestamp.value,
+  }))
+
+  const saveDraft = async (draft: INote) => {
+    id.value = draft.id || `draft-${Date.now()}`
+    title.value = draft.title
+    content.value = draft.content
+    color.value = draft.color
+    font.value = draft.font
+    scripture.value = draft.scripture
+    tags.value = draft.tags
+    isPublic.value = draft.public || false
+    timestamp.value = draft.timestamp || Date.now()
+
+    await dbStore.execute((db) => db.insert('drafts', { ...draft, _id: draft.id }))
+  }
+
+  const updateDraft = async (updates: Partial<INote>) => {
+    timestamp.value = Date.now()
+    if (updates.title !== undefined) title.value = updates.title
+    if (updates.content !== undefined) content.value = updates.content
+    if (updates.color !== undefined) color.value = updates.color
+    if (updates.font !== undefined) font.value = updates.font
+    if (updates.scripture !== undefined) scripture.value = updates.scripture
+    if (updates.tags !== undefined) tags.value = updates.tags
+    if (updates.public !== undefined) isPublic.value = updates.public
+
+    const payload = { ...currentDraftPayload.value, _id: id.value }
+
+    // We can use insert for overriding drafts since wa-sqlite handles generic upserts gracefully.
+    await dbStore.execute((db) => db.update('drafts', id.value, payload).catch(() => db.insert('drafts', payload)))
+  }
+
+  const resetDraft = () => {
+    id.value = `draft-${Date.now()}` // Generate new ID for next draft
+    title.value = ''
+    content.value = ''
+    color.value = '#d1c7ff'
+    font.value = 'default'
+    scripture.value = []
+    tags.value = []
+    timestamp.value = Date.now()
+  }
+
+  // To preserve backwards-compatibility with views accessing `noteDraftStore.$state` directly
+  // we expose `$state` returning the current active draft payload
+  const $state = currentDraftPayload
+
+  return {
+    id, title, content, color, font, scripture, tags, isPublic, timestamp,
+    allDrafts, loadDrafts, saveDraft, updateDraft, resetDraft, $state
+  }
 })
 
 export const useSavedNotesStore = defineStore('savedNotes', () => {
-  const notes = useLocalStorage<INote[]>('notes', [], { mergeDefaults: true })
+  const notes = ref<INote[]>([])
+  const dbStore = useDatabaseStore()
 
   const isEmpty = computed(() => notes.value.length === 0)
 
-  // FixBug: Runtime error when no scripture is selected for a note
-  const addToNotes = (note: INote) => {
-    note.id = generateId(
-      `${note.title} ${note.scripture[0].book}`,
-      note.scripture[0].chapter,
-      note.scripture[0].verse,
-    )
-    const found = notes.value.find((not) => not.id === note.id)
-    if (!found) notes.value.push(note)
+  // Load notes initially and subscribe to updates
+  const loadNotes = async () => {
+    if (!dbStore.isReady) return;
+    const dbNotes = await dbStore.execute((db) => db.find('notes'))
+    
+    // Map LocalFirstDB document shape to INote if needed, though they should match if inserted identically
+    notes.value = dbNotes as unknown as INote[]
   }
 
-  const removeFromNotes = (noteId: string) => {
-    const indexToRemove = notes.value.findIndex((note) => note.id === noteId)
+  // Set up subscription once the database is ready
+  watch(() => dbStore.isReady, (ready) => {
+    if (ready && dbStore.db) {
+      loadNotes();
+      dbStore.db.onChange((op) => {
+        if (op.collection === 'notes') {
+          loadNotes();
+        }
+      });
+    }
+  }, { immediate: true })
 
-    if (indexToRemove !== -1) {
-      notes.value.splice(indexToRemove, 1)
+  // FixBug: Runtime error when no scripture is selected for a note
+  const addToNotes = async (note: INote) => {
+    note.id = generateId(
+      `${note.title} ${note.scripture[0]?.book || 'NoBook'}`,
+      note.scripture[0]?.chapter || 0,
+      note.scripture[0]?.verse || 0,
+    )
+    const found = notes.value.find((not) => not.id === note.id)
+    if (!found) {
+      // Optimistic UI update
+      notes.value.push(note)
+      // Actual DB insert
+      await dbStore.execute((db) => db.insert('notes', { ...note, _id: note.id }))
     }
   }
 
-  return { notes, isEmpty, addToNotes, removeFromNotes }
+  const removeFromNotes = async (noteId: string) => {
+    const indexToRemove = notes.value.findIndex((note) => note.id === noteId)
+
+    if (indexToRemove !== -1) {
+      notes.value.splice(indexToRemove, 1) // Optimistic remove
+      await dbStore.execute((db) => db.delete('notes', noteId))
+    }
+  }
+
+  return { notes, isEmpty, addToNotes, removeFromNotes, loadNotes }
 })
 
 export const useRecentScriptureStore = defineStore('recentScripture', () => {
   const numOfItemsToReturn = 6
   const numOfDays = 15
   const recentScripture = ref<IRecent[]>([])
+  const dbStore = useDatabaseStore()
 
-  const addToRecent = (recent: IRecent) => {
+  const loadScripture = async () => {
+    if (!dbStore.isReady) return;
+    const dbItems = await dbStore.execute((db) => db.find('recent_scriptures'))
+    recentScripture.value = (dbItems as unknown as IRecent[]).sort((a, b) => b.timestamp - a.timestamp)
+  }
+
+  watch(() => dbStore.isReady, (ready) => {
+    if (ready && dbStore.db) {
+      loadScripture();
+      dbStore.db.onChange((op) => {
+        if (op.collection === 'recent_scriptures') {
+          loadScripture();
+        }
+      });
+    }
+  }, { immediate: true })
+
+  const addToRecent = async (recent: IRecent) => {
     const indexToRemove = recentScripture.value.findIndex((scripture) => scripture.id === recent.id)
 
     if (indexToRemove === -1) {
-      recentScripture.value.unshift(recent)
+      recentScripture.value.unshift(recent) // Optimistic
+      await dbStore.execute((db) => db.insert('recent_scriptures', { ...recent, _id: recent.id }))
+      await removeOldItems()
     } else {
       console.log(`${recent.label} already added to recent`)
     }
-    // recentScripture.value.unshift(recent)
   }
 
   const dateThreshold = computed(() => {
@@ -202,21 +306,35 @@ export const useRecentScriptureStore = defineStore('recentScripture', () => {
     return threshold.setDate(today.getDate() - numOfDays)
   })
 
-  const removeOldItems = () => {
-    recentScripture.value = recentScripture.value.filter(
+  const removeOldItems = async () => {
+    const oldItems = recentScripture.value.filter(
       (item) => item.timestamp < dateThreshold.value,
     )
+    
+    // Remove local
+    recentScripture.value = recentScripture.value.filter(
+      (item) => item.timestamp >= dateThreshold.value,
+    )
+
+    // Remove from DB
+    if (oldItems.length > 0) {
+      await dbStore.execute(async (db) => {
+        for (const item of oldItems) {
+          if (item.id) await db.delete('recent_scriptures', item.id)
+        }
+      })
+    }
   }
 
   const getNMostRecent = computed(() => {
     if (recentScripture.value.length > numOfItemsToReturn) {
-      return recentScripture.value.slice(numOfItemsToReturn)
+      return recentScripture.value.slice(0, numOfItemsToReturn)
     } else {
       return recentScripture.value
     }
   })
 
-  return { recentScripture, getNMostRecent, addToRecent, removeOldItems }
+  return { recentScripture, getNMostRecent, addToRecent, removeOldItems, loadScripture }
 })
 
 export const useSearchedScriptureStore = defineStore('searchedScripture', () => {
@@ -261,16 +379,35 @@ export const useRecentTagsStore = defineStore('recentTags', () => {
   const numOfItemsToReturn = 15
   const numOfDays = 15
   const recentTags = ref<IRecent[]>([])
+  const dbStore = useDatabaseStore()
 
-  const addToRecent = (recent: IRecent) => {
+  const loadTags = async () => {
+    if (!dbStore.isReady) return;
+    const dbItems = await dbStore.execute((db) => db.find('recent_tags'))
+    recentTags.value = (dbItems as unknown as IRecent[]).sort((a, b) => b.timestamp - a.timestamp)
+  }
+
+  watch(() => dbStore.isReady, (ready) => {
+    if (ready && dbStore.db) {
+      loadTags();
+      dbStore.db.onChange((op) => {
+        if (op.collection === 'recent_tags') {
+          loadTags();
+        }
+      });
+    }
+  }, { immediate: true })
+
+  const addToRecent = async (recent: IRecent) => {
     const indexToRemove = recentTags.value.findIndex((tag) => tag.id === recent.id)
 
     if (indexToRemove === -1) {
       recentTags.value.unshift(recent)
+      await dbStore.execute((db) => db.insert('recent_tags', { ...recent, _id: recent.id }))
+      await removeOldItems()
     } else {
       console.log(`${recent.label} already added to recent`)
     }
-    // recentScripture.value.unshift(recent)
   }
 
   const dateThreshold = computed(() => {
@@ -280,17 +417,26 @@ export const useRecentTagsStore = defineStore('recentTags', () => {
     return threshold.setDate(today.getDate() - numOfDays)
   })
 
-  const removeOldItems = () => {
-    recentTags.value = recentTags.value.filter((item) => item.timestamp < dateThreshold.value)
+  const removeOldItems = async () => {
+    const oldItems = recentTags.value.filter((item) => item.timestamp < dateThreshold.value)
+    recentTags.value = recentTags.value.filter((item) => item.timestamp >= dateThreshold.value)
+
+    if (oldItems.length > 0) {
+      await dbStore.execute(async (db) => {
+        for (const item of oldItems) {
+          if (item.id) await db.delete('recent_tags', item.id)
+        }
+      })
+    }
   }
 
   const getNMostRecent = computed(() => {
     if (recentTags.value.length > numOfItemsToReturn) {
-      return recentTags.value.slice(numOfItemsToReturn)
+      return recentTags.value.slice(0, numOfItemsToReturn)
     } else {
       return recentTags.value
     }
   })
 
-  return { recentTags, getNMostRecent, addToRecent, removeOldItems }
+  return { recentTags, getNMostRecent, addToRecent, removeOldItems, loadTags }
 })

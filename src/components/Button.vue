@@ -106,7 +106,7 @@ const props = defineProps({
     default: undefined,
   },
   labelSize: {
-    type: String as () => SpacingSize,
+    type: String as () => SpacingSize | 'small' | 'normal' | 'medium' | 'large',
     default: undefined,
   },
   iconColor: {

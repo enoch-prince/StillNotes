@@ -40,14 +40,14 @@ const tagNoteLabel = computed(() => {
 
 const modalActive = ref(globalStatesStore.showAddNoteSettings)
 const showReminderModal = ref(false)
-const makePublic = ref(noteDraftStore.public)
+const makePublic = ref(noteDraftStore.isPublic)
 
 function goNext() {
   modalActive.value = true
 }
 
-function saveNote() {
-  savedNotesStore.addToNotes(noteDraftStore.$state)
+async function saveNote() {
+  await savedNotesStore.addToNotes(noteDraftStore.$state)
   router.push({name: 'home'})
 }
 
