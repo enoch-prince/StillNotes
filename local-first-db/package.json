@@ -1,0 +1,65 @@
+{
+  "name": "local-first-db",
+  "version": "0.1.0",
+  "description": "Local-first database with event sourcing and multi-database sync support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "server": "ts-node server/index.ts",
+    "server:mongo": "ADAPTER=mongodb MONGO_URI=mongodb://localhost:27017 ts-node server/index.ts",
+    "server:postgres": "ADAPTER=postgres POSTGRES_CONNECTION_STRING=postgresql://localhost:5432/localfirstdb ts-node server/index.ts",
+    "dev": "concurrently \"npm run build:watch\" \"npm run server\"",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
+  },
+  "keywords": [
+    "local-first",
+    "offline-first",
+    "database",
+    "sync",
+    "event-sourcing",
+    "crdt",
+    "indexeddb",
+    "sqlite",
+    "wasm"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
+    "@types/react": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "cors": "^2.8.5",
+    "eslint": "^8.45.0",
+    "express": "^4.18.2",
+    "jest": "^29.6.0",
+    "mongodb": "^6.0.0",
+    "pg": "^8.11.0",
+    "prettier": "^3.0.0",
+    "react": "^18.2.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.0",
+    "wa-sqlite": "^0.9.9"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "vue": "^3.5.17"
+  },
+  "optionalDependencies": {
+    "wa-sqlite": "^0.9.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
