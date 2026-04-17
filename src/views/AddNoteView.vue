@@ -1,7 +1,12 @@
 <!-- views/AddNote.vue -->
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+import { Markdown } from 'tiptap-markdown'
+import TextAlign from '@tiptap/extension-text-align'
+import Placeholder from '@tiptap/extension-placeholder'
 import {
   useGlobalStatesStore,
   useNoteDraftStore,
@@ -32,6 +37,47 @@ const fontStyle = ref(noteDraftStore.font || 'default')
 const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 const today = formatDate(dateToday.value)
 const tags = ref<string[]>(noteDraftStore.tags)
+
+const editor = useEditor({
+  content: noteContent.value,
+  extensions: [
+    StarterKit,
+    Markdown,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
+    Placeholder.configure({
+      placeholder: "I'm reflecting on...",
+    }),
+  ],
+  onUpdate: ({ editor }) => {
+    noteContent.value = editor.storage.markdown.getMarkdown();
+  },
+  editorProps: {
+    attributes: {
+      class: 'is-transparent is-family-secondary tiptap-custom-styles p-0',
+    },
+  },
+})
+
+onBeforeUnmount(() => {
+  editor.value?.destroy()
+})
+
+const toggleBold = () => {
+  editor.value?.chain().focus().toggleBold().run()
+}
+
+const cycleAlignment = () => {
+  if (!editor.value) return;
+  if (editor.value.isActive({ textAlign: 'left' }) || !editor.value.isActive({ textAlign: 'center' }) && !editor.value.isActive({ textAlign: 'right' })) {
+    editor.value.chain().focus().setTextAlign('center').run();
+  } else if (editor.value.isActive({ textAlign: 'center' })) {
+    editor.value.chain().focus().setTextAlign('right').run();
+  } else {
+    editor.value.chain().focus().setTextAlign('left').run();
+  }
+}
 
 const tagNoteLabel = computed(() => {
   if (tags.value.length === 0) return "Not Set";
@@ -123,21 +169,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags, ma
         style="border: none; background: transparent; box-shadow: none"
       />
 
-      <textarea
-        id="note"
-        rows="5"
-        class="textarea p-0 is-transparent is-family-secondary mt-4"
-        v-model="noteContent"
-        placeholder="I'm reflecting on..."
-        style="
-          display: flex;
-          border: none;
-          background: transparent;
-          resize: none;
-          color: white;
-          box-shadow: none;
-        "
-      />
+      <editor-content :editor="editor" class="mt-4 p-0 content-editor" />
       <div class="tags">
         <span
           v-for="scripture in noteScripture"
@@ -169,15 +201,18 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags, ma
     <!-- Footer / Toolbar -->
     <div class="note-toolbar p-4 is-flex is-justify-content-space-between is-align-items-center">
       <div class="icon-text is-flex-direction-row has-text-black-bis">
-        <div @click="">
-          <span class="icon circle-size has-background-white-alpha-50">
-            <font-awesome-icon icon="fa-solid fa-font"></font-awesome-icon>
+        <div @click="toggleBold">
+          <span class="icon circle-size" :class="editor?.isActive('bold') ? 'has-background-white' : 'has-background-white-alpha-50'">
+            <font-awesome-icon icon="fa-solid fa-font" :class="editor?.isActive('bold') ? 'has-text-grey-dark' : ''"></font-awesome-icon>
           </span>
         </div>
 
-        <div @click="">
-          <span class="icon circle-size has-background-white-alpha-50">
-            <font-awesome-icon icon="fa-solid fa-align-left"></font-awesome-icon>
+        <div @click="cycleAlignment">
+          <span class="icon circle-size" :class="(editor?.isActive({ textAlign: 'center' }) || editor?.isActive({ textAlign: 'right' })) ? 'has-background-white' : 'has-background-white-alpha-50'">
+            <font-awesome-icon 
+              :icon="editor?.isActive({ textAlign: 'center' }) ? 'fa-solid fa-align-center' : editor?.isActive({ textAlign: 'right' }) ? 'fa-solid fa-align-right' : 'fa-solid fa-align-left'" 
+              :class="(editor?.isActive({ textAlign: 'center' }) || editor?.isActive({ textAlign: 'right' })) ? 'has-text-grey-dark' : ''"
+            ></font-awesome-icon>
           </span>
         </div>
       </div>
@@ -370,5 +405,25 @@ div.drag-bar {
   align-items: center; */
   width: 30%;
   border-bottom: 3px solid #efeef0;
+}
+
+:deep(.tiptap) {
+  display: flex;
+  flex-direction: column;
+  border: none;
+  background: transparent;
+  resize: none;
+  color: white;
+  box-shadow: none;
+  min-height: 120px;
+  outline: none;
+}
+
+:deep(.tiptap p.is-editor-empty:first-child::before) {
+  color: rgba(255, 255, 255, 0.65);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
 </style>
