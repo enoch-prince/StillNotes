@@ -30,7 +30,7 @@ export const useDatabaseStore = defineStore('database', () => {
     const conn = await sqlite3.open_v2('stillnotes-db');
 
     // Sanitize a single value so wa-sqlite can accept it
-    const sanitize = (v: any): SQLite.SQLiteCompatibleType => {
+    const sanitize = (v: any): SQLiteCompatibleType => {
       if (v === undefined || v === null) return null;
       if (typeof v === 'boolean') return v ? 1 : 0;
       if (typeof v === 'number') return v;

@@ -51,7 +51,7 @@ const editor = useEditor({
     }),
   ],
   onUpdate: ({ editor }) => {
-    noteContent.value = editor.storage.markdown.getMarkdown();
+    noteContent.value = (editor.storage as any).markdown.getMarkdown();
   },
   editorProps: {
     attributes: {
