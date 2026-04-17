@@ -2,9 +2,33 @@ import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { BibleBook, INote, IRecent, Scripture } from '@/utils/custom_types'
-import { useLocalStorage } from '@vueuse/core'
 import { generateId } from '@/utils/utils'
 import { useDatabaseStore } from './db'
+
+export const useAuthStore = defineStore('auth', () => {
+  const isAuthenticated = ref(false)
+  const dbStore = useDatabaseStore()
+
+  const loadAuth = async () => {
+    if (!dbStore.isReady) return
+    const authData = await dbStore.execute((db) => db.find('auth'))
+    if (authData.length > 0) {
+      // @ts-ignore
+      isAuthenticated.value = !!authData[0].isAuthenticated
+    }
+  }
+
+  const setAuthenticated = async (value: boolean) => {
+    isAuthenticated.value = value
+    await dbStore.execute((db) => db.update('auth', 'session', { _id: 'session', isAuthenticated: value }).catch(() => db.insert('auth', { _id: 'session', isAuthenticated: value })))
+  }
+
+  watch(() => dbStore.isReady, (ready) => {
+    if (ready) loadAuth()
+  }, { immediate: true })
+
+  return { isAuthenticated, setAuthenticated, loadAuth }
+})
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref(0)
@@ -197,6 +221,7 @@ export const useNoteDraftStore = defineStore('noteDraft', () => {
     scripture.value = []
     tags.value = []
     timestamp.value = Date.now()
+    isPublic.value = false
   }
 
   // To preserve backwards-compatibility with views accessing `noteDraftStore.$state` directly
@@ -238,18 +263,20 @@ export const useSavedNotesStore = defineStore('savedNotes', () => {
 
   // FixBug: Runtime error when no scripture is selected for a note
   const addToNotes = async (note: INote) => {
-    note.id = generateId(
-      `${note.title} ${note.scripture[0]?.book || 'NoBook'}`,
-      note.scripture[0]?.chapter || 0,
-      note.scripture[0]?.verse || 0,
-    )
-    const found = notes.value.find((not) => not.id === note.id)
-    if (!found) {
-      // Optimistic UI update
-      notes.value.push(note)
-      // Actual DB insert
-      await dbStore.execute((db) => db.insert('notes', { ...note, _id: note.id }))
+    if (!note.id || note.id.startsWith('draft-')) {
+        note.id = generateId(
+          `${note.title} ${note.scripture[0]?.book || 'NoBook'}`,
+          note.scripture[0]?.chapter || 0,
+          note.scripture[0]?.verse || 0,
+        )
     }
+    
+    const payload = { ...note, _id: note.id }
+    // Upsert logic
+    await dbStore.execute((db) => db.update('notes', note.id!, payload).catch(() => db.insert('notes', payload)))
+    
+    // Refresh local state if not already caught by subscription
+    await loadNotes()
   }
 
   const removeFromNotes = async (noteId: string) => {

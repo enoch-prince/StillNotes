@@ -3,16 +3,25 @@ import Button from '@/components/Button.vue'
 import googleIconSVG from '@/components/svgs/googleIconSVG.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore, useQuestionaireStore } from '@/stores/counter'
 
 const router = useRouter()
 
 const email = ref('')
 const password = ref('')
 
-const handleLogin = () => {
+const handleLogin = async () => {
   // TODO: Implement login logic
   console.log('Logging in with:', email.value, password.value)
-  router.push('/')
+  const authStore = useAuthStore()
+  await authStore.setAuthenticated(true)
+  
+  const questionaire = useQuestionaireStore()
+  if (!questionaire.completed) {
+    router.push('/questionaire')
+  } else {
+    router.push('/')
+  }
 }
 
 const handleGoogleLogin = () => {

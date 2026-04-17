@@ -1,39 +1,56 @@
 <script setup lang="ts">
-import { useNoteDraftStore } from '@/stores/counter'
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router';
+import type { INote } from '@/utils/custom_types';
 
-defineProps<{ id_num?: number; fullVersion?: boolean }>()
-
-// const emit = defineEmits(['viewNoteEvent'])
-
-const notesStore = useNoteDraftStore()
-const noteTitle = ref(notesStore.title)
-const noteContent = ref(notesStore.content)
-const selectedColor = ref(notesStore.color)
-const fontStyle = ref(notesStore.font)
-const scripture = ref(notesStore.scripture)
-
+const props = defineProps<{ 
+  note?: INote; 
+  id_num?: number; // Legacy support
+  fullVersion?: boolean 
+}>()
 
 const router = useRouter()
-const route = useRoute()
 
-const viewNote = (id: number) => {
-  if (route.name === 'search') {
-    console.log("OnClick viewNote: id = ", id)
-    // emit('viewNoteEvent', { id: id })
-    router.push({ name: 'view-note', params: { noteId: id }})
+const noteTitle = computed(() => props.note?.title || (props.id_num !== undefined ? `Note ${props.id_num}` : 'Untitled Note'))
+const noteContent = computed(() => {
+  if (props.note?.content) {
+    return props.note.content.length > 50 
+      ? props.note.content.substring(0, 50) + '...' 
+      : props.note.content
+  }
+  return 'No content summary available...'
+})
+
+const viewNote = () => {
+  const targetId = props.note?.id || props.id_num?.toString()
+  if (targetId) {
+    router.push({ name: 'view-note', params: { noteId: targetId }})
   }
 }
 
 </script>
 
 <template>
-  <div class="box" @click="viewNote(id_num!)">
-    <p class="has-text-centered">
-      This is a recent <strong>note {{ id_num }}</strong> !!!
-    </p>
+  <div class="box note-card mb-4" :style="{ backgroundColor: note?.color || 'white' }" @click="viewNote">
+    <div class="content">
+      <h3 class="title is-5 mb-2" :class="{ 'has-text-white': note?.color }">{{ noteTitle }}</h3>
+      <p class="is-family-secondary" :class="{ 'has-text-white': note?.color }">
+        {{ noteContent }}
+      </p>
+    </div>
   </div>
 </template>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.note-card {
+  cursor: pointer;
+  border-radius: 1rem;
+  transition: transform 0.2s;
+}
+.note-card:hover {
+  transform: translateY(-2px);
+}
+.has-text-white {
+  color: white !important;
+}
+</style>

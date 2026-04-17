@@ -29,9 +29,9 @@ function doSearch(item: string) {
   searchSubstring(item, 20)
 }
 
-function selectTag(tagLabel: string) {
+async function selectTag(tagLabel: string) {
   if (!tagAlreadySelected.value(tagLabel)) selectedTags.value.push(tagLabel)
-  recentTagsStore.addToRecent({
+  await recentTagsStore.addToRecent({
     id: generateId(tagLabel),
     label: tagLabel,
     timestamp: new Date().getDate(),
@@ -46,8 +46,8 @@ function removeTag(label: string) {
   }
 }
 
-watch(selectedTags, (newSelected) => {
-  noteDraftStore.updateDraft({
+watch(selectedTags, async (newSelected) => {
+  await noteDraftStore.updateDraft({
     tags: newSelected,
   })
 })

@@ -39,15 +39,15 @@ export const Bible = {
 } // Separate into it's file and complete the whole Bible: TODO
 
 export function searchBible(jsonData: { newTestament: any[] }, bookName: string) {
-  // 1. Find the book in New Testament
-  const book = jsonData.newTestament.find((b) => b.book.toLowerCase() === bookName.toLowerCase())
+  if (!bookName.trim()) return []
 
-  if (!book) {
-    return { error: 'Book not found' }
-  }
+  // 1. Filter books that include the search term in their name
+  const matches = jsonData.newTestament.filter((b) =>
+    b.book.toLowerCase().includes(bookName.toLowerCase()),
+  )
 
-  // Return entire book
-  return book
+  // 2. Sort results alphabetically
+  return matches.sort((a, b) => a.book.localeCompare(b.book))
 }
 
 export function generateId(

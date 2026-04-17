@@ -14,8 +14,8 @@ const router = useRouter()
 
 watchEffect(()=> {
   if (onboard.complete) {
-    console.log("Redirected!")
-    router.push({path: '/questionaire'})
+    console.log("Redirected to Register!")
+    router.push({path: '/register'})
   }
 })
 </script>

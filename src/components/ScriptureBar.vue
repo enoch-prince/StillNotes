@@ -6,7 +6,10 @@ const prop = defineProps<{label: string}>()
 
 <template>
     <div class="is-flex is-justify-content-space-between py-2 max-width">
-        <p class="is-family-secondary is-size-6">{{ prop.label }}</p>
+        <div class="is-flex is-align-items-center">
+            <slot name="icon"></slot>
+            <p class="is-family-secondary is-size-6">{{ prop.label }}</p>
+        </div>
         <span><font-awesome-icon icon="fa-solid fa-chevron-right" style="color: #827D89"/></span>
     </div>
 </template>

@@ -33,7 +33,23 @@ const getSelectedChapter = (param: string) => {
 const getSelectedVerse = (param: number) => {
   selected.value.verse = param
   selected.value.id = scriptureId.value
-  noteDraft.scripture.push(selected.value)
+  
+  // Clone the object to avoid reference bugs
+  const newScripture = { ...selected.value }
+  
+  // Prevent duplicate verses
+  const isDuplicate = noteDraft.scripture.some(s => 
+    s.book === newScripture.book && 
+    s.chapter === newScripture.chapter && 
+    s.verse === newScripture.verse
+  )
+  
+  if (!isDuplicate) {
+    noteDraft.scripture.push(newScripture)
+  } else {
+    console.log('Duplicate verse ignored')
+  }
+
   // navigate to add-note views
   router.push({ name: 'add-note' })
 }

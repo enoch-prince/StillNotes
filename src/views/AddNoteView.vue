@@ -29,14 +29,19 @@ const savedNotesStore = useSavedNotesStore()
 const { dateToday, hour, minute, period } = storeToRefs(useNoteReminderStore())
 const { togglePeriod, resetNoteReminder } = useNoteReminderStore()
 
+// Use storeToRefs to ensure local refs are live-linked to the store
+const { 
+  title: noteTitle, 
+  content: noteContent, 
+  color: selectedColor, 
+  font: fontStyle, 
+  scripture: noteScripture, 
+  tags: tags, 
+  isPublic: makePublic 
+} = storeToRefs(noteDraftStore)
+
 const colors = ['#FFA09F', '#75C7F8', '#A795F8', '#6BEEC3', '#F8C715', '#1F7F40']
-const noteTitle = ref(noteDraftStore.title)
-const noteContent = ref(noteDraftStore.content)
-const selectedColor = ref(noteDraftStore.color || colors[2])
-const fontStyle = ref(noteDraftStore.font || 'default')
-const noteScripture = ref<Scripture[]>(noteDraftStore.scripture)
 const today = formatDate(dateToday.value)
-const tags = ref<string[]>(noteDraftStore.tags)
 
 const editor = useEditor({
   content: noteContent.value,
@@ -51,6 +56,7 @@ const editor = useEditor({
     }),
   ],
   onUpdate: ({ editor }) => {
+    // Update the store-backed noteContent ref directly
     noteContent.value = (editor.storage as any).markdown.getMarkdown();
   },
   editorProps: {
@@ -58,6 +64,13 @@ const editor = useEditor({
       class: 'is-transparent is-family-secondary tiptap-custom-styles p-0',
     },
   },
+})
+
+// Ensure the editor content stays in sync if noteContent changes externally (e.g., from DB load)
+watch(noteContent, (newValue) => {
+  if (editor.value && editor.value.storage.markdown.getMarkdown() !== newValue) {
+    editor.value.commands.setContent(newValue, false);
+  }
 })
 
 onBeforeUnmount(() => {
@@ -86,7 +99,6 @@ const tagNoteLabel = computed(() => {
 
 const modalActive = ref(globalStatesStore.showAddNoteSettings)
 const showReminderModal = ref(false)
-const makePublic = ref(noteDraftStore.isPublic)
 
 function goNext() {
   modalActive.value = true
@@ -94,6 +106,7 @@ function goNext() {
 
 async function saveNote() {
   await savedNotesStore.addToNotes(noteDraftStore.$state)
+  noteDraftStore.resetDraft()
   router.push({name: 'home'})
 }
 
@@ -139,8 +152,9 @@ const cancelNoteReminder = () => {
   resetNoteReminder()
 }
 
-watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags, makePublic], () => {
-  noteDraftStore.updateDraft({
+// Persist draft to DB on any change to the store-backed refs
+watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags, makePublic], async () => {
+  await noteDraftStore.updateDraft({
     title: noteTitle.value,
     content: noteContent.value,
     color: selectedColor.value,
@@ -149,7 +163,7 @@ watch([noteTitle, noteContent, selectedColor, fontStyle, noteScripture, tags, ma
     tags: tags.value,
     public: makePublic.value
   })
-})
+}, { deep: true })
 </script>
 
 <template>

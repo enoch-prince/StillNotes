@@ -1,12 +1,25 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { onMounted, watch } from 'vue'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useDatabaseStore } from '@/stores/db'
+import { useAuthStore, useOnboardingStore } from '@/stores/counter'
 
 const dbStore = useDatabaseStore()
+const authStore = useAuthStore()
+const onboardStore = useOnboardingStore()
+const router = useRouter()
 
-onMounted(() => {
-  dbStore.init()
+onMounted(async () => {
+  await dbStore.init()
+})
+
+// Global route guard logic or redirection
+watch(() => dbStore.isReady, async (ready) => {
+  if (ready) {
+    if (!authStore.isAuthenticated) {
+      router.push('/onboard')
+    }
+  }
 })
 </script>
 

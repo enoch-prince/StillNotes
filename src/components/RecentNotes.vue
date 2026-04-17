@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import filterIconSVG from '@/components/svgs/filterIconSVG.vue'
-import moreIconSVG from '@/components/svgs/moreIconSVG.vue'
+import Note from '@/components/Note.vue'
 import { useSavedNotesStore } from '@/stores/counter'
-import { getContrastColor } from '@/utils/utils'
 
 const searchString = ref('')
-const recentNotes = ref(useSavedNotesStore().notes)
+const savedNotesStore = useSavedNotesStore()
+const recentNotes = computed(() => savedNotesStore.notes)
 
 const filteredNotes = computed(() => {
   return recentNotes.value.filter((note) =>
@@ -32,29 +32,14 @@ const filteredNotes = computed(() => {
     </div>
   </div>
   <div
-    class="is-flex is-flex-direction-column"
-    style="gap: 5px; padding: 0 0.406rem; max-height: 60vh; overflow-y: auto; padding-bottom: 6rem"
+    class="is-flex is-flex-direction-column px-4 pb-6"
+    style="gap: 12px; max-height: 60vh; overflow-y: auto;"
   >
-    <div
-      class="pb-5"
-      :style="{
-        gap: '8px',
-        backgroundColor: note.color,
-        borderRadius: '16px',
-        color: getContrastColor(note.color),
-      }"
-      v-for="note in recentNotes"
+    <Note
+      v-for="note in filteredNotes"
       :key="note.id"
-    >
-      <div class="px-4 py-2 is-flex is-justify-content-space-between is-align-items-center">
-        <span class="is-family-secondary is-size-7">2 days ago</span>
-        <moreIconSVG :color="getContrastColor(note.color)" />
-      </div>
-      <div class="px-5">
-        <div class="is-size-4 mb-2">{{ note.title }}</div>
-        <div class="is-family-secondary">{{ note.content }}</div>
-      </div>
-    </div>
+      :note="note"
+    />
   </div>
 </template>
 
