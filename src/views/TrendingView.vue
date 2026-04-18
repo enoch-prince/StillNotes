@@ -10,7 +10,7 @@ const reminderStore = useSetReminderStore()
 
 const notesThisWeek = computed(() => {
   const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  return savedNotesStore.notes.filter(n => n.timestamp >= oneWeekAgo).length;
+  return savedNotesStore.notes.filter(n => (n.timestamp || 0) >= oneWeekAgo).length;
 })
 
 const alarmTime = computed(() => {
@@ -22,7 +22,7 @@ const topDayString = computed(() => {
   
   const dayCounts = new Array(7).fill(0)
   savedNotesStore.notes.forEach(n => {
-    dayCounts[new Date(n.timestamp).getDay()]++
+    dayCounts[new Date(n.timestamp || 0).getDay()]++
   })
   
   const maxDayIndex = dayCounts.indexOf(Math.max(...dayCounts))

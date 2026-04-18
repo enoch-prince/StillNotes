@@ -68,8 +68,8 @@ const editor = useEditor({
 
 // Ensure the editor content stays in sync if noteContent changes externally (e.g., from DB load)
 watch(noteContent, (newValue) => {
-  if (editor.value && editor.value.storage.markdown.getMarkdown() !== newValue) {
-    editor.value.commands.setContent(newValue, false);
+  if (editor.value && (editor.value.storage as any).markdown.getMarkdown() !== newValue) {
+    editor.value.commands.setContent(newValue, { emitUpdate: false });
   }
 })
 
