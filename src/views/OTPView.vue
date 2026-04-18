@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import Button from '@/components/Button.vue'
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const otp = ref(['', '', '', ''])
 const inputRefs = ref<HTMLInputElement[]>([])
@@ -12,7 +13,12 @@ const handleVerify = () => {
   const code = otp.value.join('')
   // TODO: Implement OTP verification logic
   console.log('Verifying code:', code)
-  router.push('/new-password')
+  
+  if (route.query.context === 'signup') {
+    router.push('/questionaire')
+  } else {
+    router.push('/new-password')
+  }
 }
 
 const handleInput = (index: number, event: Event) => {

@@ -1,66 +1,87 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { onMounted, watch, ref } from 'vue'
+import { RouterView, useRouter } from 'vue-router'
 import { useDatabaseStore } from '@/stores/db'
-import { useAuthStore, useOnboardingStore } from '@/stores/counter'
+import { useAuthStore, useOnboardingStore, useQuestionaireStore } from '@/stores/counter'
 
 const dbStore = useDatabaseStore()
 const authStore = useAuthStore()
-const onboardStore = useOnboardingStore()
+const questionaireStore = useQuestionaireStore()
 const router = useRouter()
+
+const showSplash = ref(true)
 
 onMounted(async () => {
   await dbStore.init()
+  
+  // Guarantee splash screen shows for at least 1.5 seconds visually
+  setTimeout(() => {
+    showSplash.value = false
+    checkRouting()
+  }, 1500)
 })
 
-// Global route guard logic or redirection
-watch(() => dbStore.isReady, async (ready) => {
-  if (ready) {
-    if (!authStore.isAuthenticated) {
-      router.push('/onboard')
+const checkRouting = () => {
+    if (!dbStore.isReady || !authStore.isReady) {
+        const unwatch = watch([() => dbStore.isReady, () => authStore.isReady], ([dbReady, authReady]) => {
+            if (dbReady && authReady) {
+                unwatch()
+                performRouting()
+            }
+        })
+    } else {
+        performRouting()
     }
-  }
-})
+}
+
+const performRouting = () => {
+    if (!authStore.isAuthenticated) {
+        // Ensure unauthenticated users are at onboarding / login routes
+        const path = router.currentRoute.value.path
+        if (!['/login', '/register', '/onboard', '/otp', '/forgot-password', '/new-password'].includes(path)) {
+            router.push('/onboard')
+        }
+    } else {
+        // Authenticated: Check onboarding logic so we don't nag too much
+        const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
+        const daysSinceSkipped = Date.now() - (questionaireStore.lastSkippedAt || 0)
+        
+        const path = router.currentRoute.value.path
+        
+        if (!questionaireStore.completed && daysSinceSkipped > SEVEN_DAYS && path !== '/questionaire') {
+           router.push('/questionaire')
+        } else if (['/login', '/register', '/onboard', '/otp', '/forgot-password', '/new-password'].includes(path)) {
+           router.push('/')
+        }
+    }
+}
 </script>
 
 <template>
-  <!-- <header>
-    <div class="">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/onboard">Onboarding</RouterLink>
-      </nav>
-    </div>
-  </header> -->
-
-  <div v-if="!dbStore.isReady" class="loading-container">
-    <div class="loader"></div>
-    <p>Initializing Database...</p>
+  <div v-if="showSplash" class="splash-container custom-background">
+      <p class="is-size-2 is-family-secondary has-text-primary-100 splash-text">
+        StillNotes
+      </p>
   </div>
   <RouterView v-else />
 </template>
 
 <style scoped>
-.loading-container {
+.splash-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  color: white;
+  width: 100vw;
 }
-.loader {
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top: 4px solid white;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+.custom-background {
+  background: linear-gradient(-180deg, rgba(205, 194, 255, 1) 0%, rgba(167, 149, 248, 1) 100%);
 }
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.splash-text {
+  animation: fadeIn 1.2s ease-in-out;
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 </style>

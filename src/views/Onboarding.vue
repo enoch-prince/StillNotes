@@ -22,15 +22,8 @@ watchEffect(()=> {
 
 <template>
   <div class="flex-center max-height custom-background" style="position: relative;" v-touch:swipe.right="onboard.prevStep">
-    <div class="" v-if="onboard.step == 0">
-      <p
-        @click="onboard.nextStep"
-        class="is-size-2 is-family-secondary has-text-primary-100 is-clickable"
-      >
-        StillNotes
-      </p>
-    </div>
-    <div class="flex-center" v-else-if="onboard.step == 1">
+    <!-- Removed Splash Screen step as it's handled by App.vue globally -->
+    <div class="flex-center" v-if="onboard.step == 0 || onboard.step == 1">
       <div class="is-align-content-center">
         <Onboard1SVG />
       </div>
@@ -57,7 +50,7 @@ watchEffect(()=> {
       </p>
     </div>
 
-    <div v-show="onboard.step > 0" style="position: fixed; bottom: 5%;">
+    <div style="position: fixed; bottom: 5%;">
       <PaginationBullets :total-pages="3" />
       <div
         class="is-flex width-80vw mt-5p5"

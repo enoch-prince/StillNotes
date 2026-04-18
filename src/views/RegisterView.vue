@@ -13,7 +13,7 @@ const password = ref('')
 const handleRegister = () => {
   // TODO: Implement registration logic
   console.log('Registering with:', fullName.value, email.value, password.value)
-  router.push('/login')
+  router.push({ path: '/otp', query: { context: 'signup' } })
 }
 
 const handleGoogleRegister = () => {

@@ -17,7 +17,10 @@ const handleLogin = async () => {
   await authStore.setAuthenticated(true)
   
   const questionaire = useQuestionaireStore()
-  if (!questionaire.completed) {
+  const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
+  const daysSinceSkipped = Date.now() - (questionaire.lastSkippedAt || 0)
+
+  if (!questionaire.completed && daysSinceSkipped > SEVEN_DAYS) {
     router.push('/questionaire')
   } else {
     router.push('/')

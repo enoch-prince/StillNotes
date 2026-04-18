@@ -27,16 +27,16 @@ function handleQSelect(data: { label: string; selected: boolean; id: string }) {
   console.log(selectedQs.value)
 }
 
-const handleNext = () => {
+const handleNext = async () => {
   console.log("Next Pressed!")
   // save selected options to db
-  questionaire.state = true;
+  await questionaire.setCompleted(true)
   router.push({path: '/'})
 }
 
-const handleSkip = () => {
+const handleSkip = async () => {
   console.log("Skip Pressed!")
-  questionaire.state = false
+  await questionaire.setSkipped()
   router.push({path: '/'})
 }
 

@@ -7,6 +7,7 @@ import { useDatabaseStore } from './db'
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
+  const isReady = ref(false)
   const dbStore = useDatabaseStore()
 
   const loadAuth = async () => {
@@ -16,6 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
       // @ts-ignore
       isAuthenticated.value = !!authData[0].isAuthenticated
     }
+    isReady.value = true
   }
 
   const setAuthenticated = async (value: boolean) => {
@@ -27,7 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (ready) loadAuth()
   }, { immediate: true })
 
-  return { isAuthenticated, setAuthenticated, loadAuth }
+  return { isAuthenticated, setAuthenticated, loadAuth, isReady }
 })
 
 export const useCounterStore = defineStore('counter', () => {
@@ -81,10 +83,38 @@ export const useReminderStore = defineStore('reminder', () => {
 
 export const useQuestionaireStore = defineStore('questionaire', () => {
   const state = ref(false)
+  const lastSkippedAt = ref(0)
+  const dbStore = useDatabaseStore()
+
+  const loadState = async () => {
+    if (!dbStore.isReady) return
+    const data = await dbStore.execute((db) => db.find('questionaire'))
+    if (data.length > 0) {
+      // @ts-ignore
+      state.value = !!data[0].completed
+      // @ts-ignore
+      lastSkippedAt.value = data[0].lastSkippedAt || 0
+    }
+  }
+
+  watch(() => dbStore.isReady, (ready) => {
+    if (ready) loadState()
+  }, { immediate: true })
+
+  const setCompleted = async (value: boolean) => {
+    state.value = value
+    await dbStore.execute((db) => db.update('questionaire', 'status', { _id: 'status', completed: value, lastSkippedAt: lastSkippedAt.value }).catch(() => db.insert('questionaire', { _id: 'status', completed: value, lastSkippedAt: lastSkippedAt.value })))
+  }
+
+  const setSkipped = async () => {
+    const timestamp = Date.now()
+    lastSkippedAt.value = timestamp
+    await dbStore.execute((db) => db.update('questionaire', 'status', { _id: 'status', completed: state.value, lastSkippedAt: timestamp }).catch(() => db.insert('questionaire', { _id: 'status', completed: state.value, lastSkippedAt: timestamp })))
+  }
 
   const completed = computed(() => state.value)
 
-  return { state, completed }
+  return { state, completed, lastSkippedAt, setCompleted, setSkipped }
 })
 
 export const useNavigationStore = defineStore('navigation', {

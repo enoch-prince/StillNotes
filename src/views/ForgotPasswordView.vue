@@ -10,7 +10,7 @@ const email = ref('')
 const handleSendCode = () => {
   // TODO: Implement send code logic
   console.log('Sending code to:', email.value)
-  router.push('/otp')
+  router.push({ path: '/otp', query: { context: 'reset' } })
 }
 </script>
 
