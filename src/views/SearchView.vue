@@ -21,93 +21,52 @@ const activeTag = ref('')
 
 const tagsList = ['Love', 'Faith', 'Purpose', 'Worship', 'Prayer']
 
-// High quality design placeholder data
-const dummyFeedNotes: FeedNote[] = [
-  {
-    id: '1',
-    title: '🚶 Walk by faith',
-    content: 'Today iam reflectingtrusting in what you cannot see, knowing that each step guided by belief will lead to a purpose far greater than doubt. Embrace the unseen, for it is where true strength and hope reside.',
-    scripture: 'Hebrews 1:11',
-    color: '#AEA1F9',
-    tag: 'Faith',
+import { useSavedNotesStore } from '@/stores/counter';
+import { useUserStore } from '@/stores/user';
+import type { INote } from '@/utils/custom_types';
+
+const savedNotesStore = useSavedNotesStore()
+const userStore = useUserStore()
+
+const mapToFeedNote = (note: INote): FeedNote => {
+  const scriptureText = note.scripture?.length 
+    ? `${note.scripture[0].book} ${note.scripture[0].chapter}:${note.scripture[0].verse}`
+    : 'No scripture'
+
+  return {
+    id: note.id || String(Date.now()),
+    title: note.title,
+    content: note.content,
+    scripture: scriptureText,
+    color: note.color || '#AEA1F9',
+    tag: note.tags?.length ? note.tags[0] : 'Note',
     user: {
-      avatar: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      name: 'UserName'
+      avatar: userStore.profile.avatar || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+      name: userStore.profile.fullName || 'User'
     },
     stats: {
-      likes: '100k',
-      comments: '100k'
-    }
-  },
-  {
-    id: '2',
-    title: '❤️ Boundless love',
-    content: 'Love is patient, love is kind. It does not envy, it does not boast, it is not proud. It does not dishonor others, it is not self-seeking.',
-    scripture: '1 Corinthians 13:4',
-    color: '#FFA09F',
-    tag: 'Love',
-    user: {
-      avatar: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      name: 'UserName'
-    },
-    stats: {
-      likes: '85k',
-      comments: '40k'
-    }
-  },
-  {
-    id: '3',
-    title: '✨ Embrace your purpose',
-    content: 'God has carefully placed you exactly where you are today. You are fearfully and wonderfully made for a distinct reason.',
-    scripture: 'Psalm 139:14',
-    color: '#75C7F8',
-    tag: 'Purpose',
-    user: {
-      avatar: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      name: 'UserName'
-    },
-    stats: {
-      likes: '42k',
-      comments: '12k'
-    }
-  },
-  {
-    id: '4',
-    title: '🙏🏽 Quiet prayer',
-    content: 'In the stillness of the morning, I find my peace. Through prayer, we connect intimately with the source of all grace.',
-    scripture: 'Philippians 4:6',
-    color: '#6BEEC3',
-    tag: 'Prayer',
-    user: {
-      avatar: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      name: 'UserName'
-    },
-    stats: {
-      likes: '12k',
-      comments: '1k'
-    }
-  },
-  {
-    id: '5',
-    title: '🙌 Lift up in Worship',
-    content: 'Worship is more than a song; it is the posture of a surrendered heart. Let every breath be a testament to His glory.',
-    scripture: 'John 4:24',
-    color: '#F8C715',
-    tag: 'Worship',
-    user: {
-      avatar: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-      name: 'UserName'
-    },
-    stats: {
-      likes: '50k',
-      comments: '18k'
+      likes: '0',
+      comments: '0'
     }
   }
-]
+}
 
 const filteredNotes = computed(() => {
-    if (!activeTag.value) return dummyFeedNotes
-    return dummyFeedNotes.filter(note => note.tag === activeTag.value)
+    let result = savedNotesStore.notes
+
+    if (activeTag.value) {
+        result = result.filter(note => note.tags?.includes(activeTag.value))
+    }
+
+    if (searchWord.value) {
+        const query = searchWord.value.toLowerCase()
+        result = result.filter(note => 
+            note.title.toLowerCase().includes(query) || 
+            note.content.toLowerCase().includes(query)
+        )
+    }
+
+    return result.map(mapToFeedNote)
 })
 
 watchEffect(() => {
